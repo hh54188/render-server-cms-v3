@@ -1,3 +1,5 @@
+# Alpha 0.0.0
+
 ## 初始化项目：
 
 借助于 Yeoman 其中的一个 generator ：[generator-react-webpack](https://github.com/react-webpack-generators/generator-react-webpack);
