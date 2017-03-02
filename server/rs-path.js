@@ -1,25 +1,29 @@
 var path = require('path');
 var fs = require('fs');
+var util = require('./util.js');
 
 var REQUEST_FOLDER_NAME = 'request';
 var CREATIVE_JS_NAME = 'creative.js';
-var RENDER_SERVER_DIRNAME = 'render-server';
+var RENDER_SERVER_PATH = '.';
 var isProduction = false;
 
-function checkPathIsAvailable(path) {
-	var checkExist = fs.lstatSync || fs.statSync || fs.existsSync;
-	try {
-        checkExist(path);
-    } catch (e) {
-    	return false;
+
+function setRenderServerPath(renderServerPath) {
+    RENDER_SERVER_PATH = renderServerPath.replace(/\r/g, '\\r')
+                                .replace(/\n/g, '\\n')
+                                .replace(/\s/g, '\\s');
+
+    if (!util.isAbsolutePath(RENDER_SERVER_PATH)) {
+        RENDER_SERVER_PATH = path.resolve(RENDER_SERVER_PATH);
     }
-    return true;
+}
+
+function getRenderServerPath() {
+    return RENDER_SERVER_PATH;
 }
 
 function getRootPath(isProduction) {
-	return path.resolve(
-		path.join('.', '..', RENDER_SERVER_DIRNAME, (isProduction? 'production': ''))
-	);
+    return path.join(RENDER_SERVER_PATH, (isProduction? 'production': ''))
 }
 
 function getSrcPath(isProduction) {
@@ -44,7 +48,8 @@ function getStyleFolderPath(isProduction) {
 
 
 module.exports = {
-    checkPathIsAvailable: checkPathIsAvailable,
+    setRenderServerPath: setRenderServerPath,
+    getRenderServerPath: getRenderServerPath,
     getRootPath: getRootPath,
     getSrcPath: getSrcPath,
     getConfigFilePath: getConfigFilePath,
