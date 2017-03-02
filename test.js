@@ -12,6 +12,15 @@
 // }, 1000 * 2);
 
 // ---
+// var checkRenderRunning = require('./server/check-render-is-running.js');
+// setInterval(function () {
+//     checkRenderRunning.getRunningState(function (isRunning) {
+//         console.log(isRunning);
+//     });
+// }, 1000 * 1)
+
+
+// ---
 // var rsPath = require('./server/rs-path.js');
 // rsPath.setRenderServerPath('D:\render-server');
 // var rootPath = rsPath.getRootPath();
@@ -25,12 +34,6 @@
 // var monitorConfig = require('./server/monitor-tool-config.js');
 // var config = monitorConfig.getConfig();
 // console.log(config);
-
-// ---
-// var checkRenderRunning = require('./server/check-render-is-running.js');
-// checkRenderRunning.getRunningState(function (isRunning) {
-//     console.log(isRunning);
-// });
 
 // ---
 // var renderConfig = require('./server/get-render-config.js');
