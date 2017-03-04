@@ -1,17 +1,27 @@
-require('normalize.css/normalize.css');
-require('styles/App.css');
 
 import React from 'react';
-
-let yeomanImage = require('../images/yeoman.png');
+import { Container, Form, Input, Checkbox } from 'semantic-ui-react'
+require('semantic-ui-css/semantic.min.css');
 
 class AppComponent extends React.Component {
   render() {
     return (
-      <div className="index">
-        <img src={yeomanImage} alt="Yeoman Generator" />
-        <div className="notice">Please edit <code>src/components/Main.js</code> to get started!</div>
-      </div>
+      <Container>
+        <Form>
+          <Form.Field inline>
+            <label>文件夹路径</label>
+            <Input value="Helo" />
+          </Form.Field>
+          <Form.Field inline>
+            <label>端口号</label>
+            <Input value="Helo" />            
+          </Form.Field>
+          <Form.Field inline>
+            <label>启用production目录</label>
+            <Checkbox toggle label="" />
+          </Form.Field>          
+        </Form>
+      </Container>
     );
   }
 }
