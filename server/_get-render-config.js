@@ -1,5 +1,4 @@
 var path = require('path');
-var fs = require('fs');
 var rsPath = require('./rs-path.js');
 require('node-oojs');
 

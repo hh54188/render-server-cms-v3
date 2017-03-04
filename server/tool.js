@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var toolConfigFilePath = path.join('.', 'config.js');
+var toolConfigFilePath = path.join('.', 'config.json');
 
 function getConfig() {
 	var result = '';	
@@ -15,5 +15,8 @@ function getConfig() {
 
 
 module.exports = {
-	getConfig: getConfig
+	getConfig: getConfig,
+	getToolConfigPath: function () {
+		return toolConfigFilePath;
+	}
 }
