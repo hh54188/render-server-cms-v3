@@ -1,13 +1,12 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
 
-import React from 'react';
-import Input from './Input';
-
-class AppComponent extends React.Component {
-  render() {
-    return (
-      <Input />
-    );
-  }
+class App extends React.Component {
+    render() {
+        return (
+            <div>Hello World</div>
+        );
+    }
 }
 
-export default AppComponent;
+ReactDOM.render(<App />, document.querySelector('#container'));

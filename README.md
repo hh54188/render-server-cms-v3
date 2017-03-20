@@ -1,53 +1,18 @@
-# Alpha 0.0.0
+## Webpack
 
-## 初始化项目：
+### Tutorial:
 
-借助于 Yeoman 其中的一个 generator ：[generator-react-webpack](https://github.com/react-webpack-generators/generator-react-webpack);
+- 首先你需要全局安装 webpack: `npm install -g webpack`
 
-安装 Yeoman 相关组件
-```
-- npm install -g yo
-- npm install -g generator-react-webpack
-```
+- https://scotch.io/tutorials/getting-started-with-webpack-module-bundling-magic
+- https://github.com/AriaFallah/WebpackTutorial
 
-初始化项目：
-```
-mkdir my-new-project && cd my-new-project
-yo react-webpack
-```
-
-生成新的组件：
-```
-yo react-webpack:component my/namespaced/components/name
-```
-
-启动项目：
-```
-# Start for development
-npm start # or
-npm run serve
-
-# Start the dev-server with the dist version
-npm run serve:dist
-
-# Just build the dist version and copy static files
-npm run dist
-
-# Run unit tests
-npm test
-
-# Auto-run unit tests on file changes
-npm run test:watch
-
-# Lint all files in src (also automatically done AFTER tests are run)
-npm run lint
-
-# Clean up the dist directory
-npm run clean
-
-# Just copy the static assets
-npm run copy
-```
-
-
-
+- 首先你也学会使用 ES6
+- 然后你要学会使用 react
+- 然后你要学会使用 webpack
+    - 你要学会配置基本的 webpack.config.js
+    - 然后你要学会使用 loader 和 plugins
+    - 然后你还要学会 webpack-dev-server
+    - 把命令添加进 `npm scripts` 配置里
+- 然后你要学会使用 babel
+- 最后你还要学会把 webpack 和 babel 还有 babel 结合在一起
