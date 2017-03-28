@@ -1,10 +1,15 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import Input from 'components/input';
 
 class App extends React.Component {
     render() {
         return (
-            <div>Hello World</div>
+            <div>
+                <h1>Hello World</h1>
+                <Input />
+            </div>
         );
     }
 }

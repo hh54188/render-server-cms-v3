@@ -1,14 +1,22 @@
+'use strict'
+const path = require('path');
+
 module.exports = {
     entry: './src/components/main.js',
+    context: path.join(__dirname, '..'),
     output: {
-        filename: './src/build/bundle.js' // 可以忽略路径只保留文件名而添加path字段
+        filename: './src/build/bundle.js'
     },
-    watch: true,
+    resolve: {
+        alias: {
+            'components': path.resolve(path.join('.', 'src', 'components'))
+        }
+    },
     module: {
         loaders: [
             {
                 test: /\.(js|jsx)$/,
-                loader: 'babel-loader' // webpack 提示必须要带 -loader 后缀
+                loader: 'babel-loader'
             },
             {
                 test: /\.css$/,
@@ -16,8 +24,5 @@ module.exports = {
             }
         ]
     },
-    devServer: {
-        contentBase: './src',
-        hot: true
-    }
+    watch: true
 };

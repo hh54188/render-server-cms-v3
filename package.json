@@ -16,6 +16,6 @@
     "webpack-dev-server": "^2.4.2"
   },
   "scripts": {
-    "dev": "webpack --config webpack.config.dev.js"
+    "dev": "webpack-dev-server --config webpack_config/webpack.config.dev.js"
   }
 }
