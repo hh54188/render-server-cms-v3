@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "semantic-ui-react": "^0.67.2"
   },
   "devDependencies": {
     "babel-core": "^6.23.1",

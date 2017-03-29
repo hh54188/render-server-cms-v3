@@ -1,27 +1,13 @@
 ## Webpack
 
-### Tutorial:
+关于如何使用 webpack，请参考我的这篇专栏 [webpack速成](https://zhuanlan.zhihu.com/p/26041084)
 
-- 首先你需要全局安装 webpack: `npm install -g webpack`
+## 使用 yarn
 
+从这个项目开始使用 yarn 代替 npm，没有为什么，生活所迫而已
 
-
-- 首先你也学会使用 ES6
-- 然后你要学会使用 react
-- 然后你要学会使用 webpack
-    - 你要学会配置基本的 webpack.config.js
-    - 然后你要学会使用 loader 和 plugins
-    - 然后你还要学会 webpack-dev-server
-    - 把命令添加进 `npm scripts` 配置里
-- 然后你要学会使用 babel
-- 最后你还要学会把 webpack 和 babel 还有 babel 结合在一起
-
-最简单的 webpack 入门：
-https://webpack.github.io/docs/tutorials/getting-started/
-https://scotch.io/tutorials/getting-started-with-webpack-module-bundling-magic
-https://scotch.io/tutorials/setup-a-react-environment-using-webpack-and-babel
-
-最完整的 webpack + react + babel 教程
-https://github.com/AriaFallah/WebpackTutorial
-https://www.codementor.io/tamizhvendan/beginner-guide-setup-reactjs-environment-npm-babel-6-webpack-du107r9zr
-https://www.twilio.com/blog/2015/08/setting-up-react-for-es6-with-webpack-and-babel-2.html
+为什么要使用 yarn 呢，据说有以下好处：
+- 支持并行下载（安装更快）
+- 使用 `.lock` 文件保证依赖包跨平台的一致性
+- 能够缓存已经安装过的包并进行离线安装
+- yarn 提供扁平的依赖结构，而 npm 是嵌套的依赖结构
