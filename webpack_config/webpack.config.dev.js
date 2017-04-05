@@ -9,7 +9,9 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'components': path.resolve(path.join('.', 'src', 'components'))
+            'components': path.resolve(path.join('.', 'src', 'components')),
+            'src': path.resolve(path.join('.', 'src')),
+            'stores': path.resolve(path.join('.', 'src', 'stores'))
         }
     },
     module: {
