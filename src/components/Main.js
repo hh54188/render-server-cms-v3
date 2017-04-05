@@ -1,12 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Input from 'components/input';
-import FormExampleInlineGroupedFields from 'components/panel_config.js';
+import RenderServerConfig from 'components/render_server_config.js';
 
 import {Container, Grid} from 'semantic-ui-react';
 
 require('semantic-ui-css/semantic.min.css');
+
+let rsCfgObj = {
+    isRunning: false,
+    absolutePath: 'D:\\render-server',
+    enableProductionDir: true,
+    port: '8124',
+    dbName: 'nova_ts_liguangyi',
+    dbAccount: 'root',
+    dbPassword: '123456',
+    dbPort: '8877'    
+};
 
 class App extends React.Component {
     render() {
@@ -16,7 +26,7 @@ class App extends React.Component {
                     <Grid.Row></Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <FormExampleInlineGroupedFields />
+                            <RenderServerConfig config={rsCfgObj} />
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
