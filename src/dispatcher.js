@@ -1,4 +1,4 @@
-export default class Dispatcher {
+class Dispatcher {
     register(callback) {
 
     }
@@ -6,3 +6,5 @@ export default class Dispatcher {
 
     }
 }
+
+export default new Dispatcher();

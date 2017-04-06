@@ -1,8 +1,9 @@
 'use strict'
+
 const path = require('path');
 
 module.exports = {
-    entry: './src/components/main.js',
+    entry: './src/components/App.js',
     context: path.join(__dirname, '..'),
     output: {
         filename: './src/build/bundle.js'
@@ -11,7 +12,8 @@ module.exports = {
         alias: {
             'components': path.resolve(path.join('.', 'src', 'components')),
             'src': path.resolve(path.join('.', 'src')),
-            'stores': path.resolve(path.join('.', 'src', 'stores'))
+            'stores': path.resolve(path.join('.', 'src', 'stores')),
+            'actions': path.resolve(path.join('.', 'src', 'actions'))
         }
     },
     module: {

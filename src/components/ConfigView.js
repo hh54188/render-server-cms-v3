@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox, Message } from 'semantic-ui-react'
 
-class RenderServerConfig extends React.Component {
+export default class ConfigView extends React.Component {
     render() {
         let renderStateMessage = this.props.config.isRunning
             ?<Message
@@ -9,24 +9,29 @@ class RenderServerConfig extends React.Component {
                         icon='smile'
                         header='Render Server 运行中'
                         content='检测端口号被占用'
+                        size='small'
              />
             : <Message
                         negative={true}
                         icon='frown'
                         header='Render Server 未运行'
                         content='未检测到端口号被占用'
+                        size='small'                        
             />
+        let saveChangeButton = <Button type={'button'} size={'small'} basic={true}>保存</Button>;
+        let rollbackChangeButton =  <Button type={'button'} size={'small'} basic={true}>撤销</Button>;
+
         let lunchRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
-                <Button type={'button'} color={'orange'}>重新启动 Render Server</Button>
+                <Button type={'button'} size={'small'} color={'orange'}>重新启动 Render Server</Button>
             </Form.Field>
             : <Form.Field>
-                <Button type={'button'} primary={true}>启动 Render Server</Button>
+                <Button type={'button'} size={'small'} primary={true}>启动 Render Server</Button>
             </Form.Field>;
         
         let stopRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
-                <Button type={'button'} color={'red'}>终止 Render Server</Button>
+                <Button type={'button'} size={'small'} color={'red'}>终止 Render Server</Button>
             </Form.Field>
             : '';
         
@@ -55,7 +60,7 @@ class RenderServerConfig extends React.Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <Button type={'button'}>重新选择目录</Button>
+                        <Button size={'small'} basic={true} type={'button'}>重新选择目录</Button>
                     </Form.Field>
                 </Form.Group>
                 {/* 是否启用 production 目录*/}
@@ -91,7 +96,7 @@ class RenderServerConfig extends React.Component {
                         <label>数据库账户名称</label>
                     </Form.Field>
                     <Form.Field>
-                        <Input value={this.props.config.dbAccount} />
+                        <Input onChange={this.props.bindInputChangeHandler('dbAccount')} value={this.props.config.dbAccount} />
                     </Form.Field>
                 </Form.Group>
                 {/* 数据库账户密码 */}
@@ -113,6 +118,8 @@ class RenderServerConfig extends React.Component {
                     </Form.Field>
                 </Form.Group>
                 <Form.Group inline>
+                    {saveChangeButton}
+                    {rollbackChangeButton}                    
                     {lunchRenderServerButton}
                     {stopRenderServerButton}
                 </Form.Group>        
@@ -120,5 +127,3 @@ class RenderServerConfig extends React.Component {
         );
     }
 }
-
-export default RenderServerConfig

@@ -1,24 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import RenderServerConfig from 'components/render_server_config.js';
+import ConfigView from 'components/ConfigView.js';
+import ConfigStore from 'stores/ConfigStore.js';
 
 import {Container, Grid} from 'semantic-ui-react';
 
 require('semantic-ui-css/semantic.min.css');
 
-let rsCfgObj = {
-    isRunning: false,
-    absolutePath: 'D:\\render-server',
-    enableProductionDir: true,
-    port: '8124',
-    dbName: 'nova_ts_liguangyi',
-    dbAccount: 'root',
-    dbPassword: '123456',
-    dbPort: '8877'    
-};
-
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            config: ConfigStore.getConfig()
+        }
+    }
+    bindConfigInputChangeHandler(fieldName) {
+        return function (event) {
+            console.log(fieldName, event.target.value);
+        }
+    }
     render() {
         return (
             <Container fluid={true}>
@@ -26,7 +27,10 @@ class App extends React.Component {
                     <Grid.Row></Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <RenderServerConfig config={rsCfgObj} />
+                            <ConfigView 
+                                bindInputChangeHandler={this.bindConfigInputChangeHandler} 
+                                config={this.state.config} 
+                            />
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
