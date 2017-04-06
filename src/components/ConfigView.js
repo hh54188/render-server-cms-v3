@@ -1,7 +1,17 @@
 import React from 'react'
-import { Form, Input, Button, Checkbox, Message } from 'semantic-ui-react'
+import { Form, Input, Button, Checkbox, Message } from 'semantic-ui-react';
+import CustomInput from 'components/CustomInput.js';
 
 export default class ConfigView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.bindInputChangeHandler = this.bindInputChangeHandler.bind(this);
+    }
+    bindInputChangeHandler(fieldName) {
+        return (event) => {
+            this.props.updateConfigInterface(fieldName, event.target.value);
+        }
+    }
     render() {
         let renderStateMessage = this.props.config.isRunning
             ?<Message
@@ -47,6 +57,7 @@ export default class ConfigView extends React.Component {
                     </Form.Field>
                     <Form.Field>
                         <Input 
+                            onChange={this.bindInputChangeHandler('absolutePath')}
                             action={
                                 { 
                                     basic: true, 
@@ -56,7 +67,7 @@ export default class ConfigView extends React.Component {
                                     content: '复制路径' 
                                 }
                             } 
-                            value={this.props.config.absolutePath} 
+                            value={this.props.config.get('absolutePath')} 
                         />
                     </Form.Field>
                     <Form.Field>
@@ -69,7 +80,11 @@ export default class ConfigView extends React.Component {
                         <label>启用Production目录</label>
                     </Form.Field>   
                     <Form.Field>
-                        <Checkbox checked={this.props.config.enableProductionDir} toggle />
+                        <Checkbox 
+                            onChange={this.bindInputChangeHandler('enableProductionDir')} 
+                            checked={this.props.config.get('enableProductionDir')} 
+                            toggle 
+                        />
                     </Form.Field>                         
                 </Form.Group>      
                 {/* 运行端口号 */}
@@ -78,7 +93,7 @@ export default class ConfigView extends React.Component {
                         <label>运行端口号</label>
                     </Form.Field>
                     <Form.Field>
-                        <Input value={this.props.config.port} />                
+                        <Input onChange={this.bindInputChangeHandler('port')} value={this.props.config.get('port')} />                
                     </Form.Field>
                 </Form.Group> 
                 {/* 连接的线上数据库名称 */}
@@ -87,7 +102,7 @@ export default class ConfigView extends React.Component {
                         <label>数据库名称</label>
                     </Form.Field>
                     <Form.Field>
-                        <Input value={this.props.config.dbName} />                
+                        <Input onChange={this.bindInputChangeHandler('dbName')} value={this.props.config.get('dbName')} />
                     </Form.Field>
                 </Form.Group>
                 {/* 数据库账户名称 */}
@@ -96,7 +111,7 @@ export default class ConfigView extends React.Component {
                         <label>数据库账户名称</label>
                     </Form.Field>
                     <Form.Field>
-                        <Input onChange={this.props.bindInputChangeHandler('dbAccount')} value={this.props.config.dbAccount} />
+                        <Input onChange={this.bindInputChangeHandler('dbAccount')}  value={this.props.config.get('dbAccount')} />
                     </Form.Field>
                 </Form.Group>
                 {/* 数据库账户密码 */}
@@ -105,7 +120,7 @@ export default class ConfigView extends React.Component {
                         <label>数据库账户密码</label>
                     </Form.Field>
                     <Form.Field>
-                        <Input value={this.props.config.dbPassword} />
+                        <Input onChange={this.bindInputChangeHandler('dbPassword')}  value={this.props.config.get('dbPassword')} />
                     </Form.Field>
                 </Form.Group>    
                 {/* 数据库端口号 */}
@@ -114,7 +129,7 @@ export default class ConfigView extends React.Component {
                         <label>数据库端口号</label>
                     </Form.Field>
                     <Form.Field>
-                        <Input value={this.props.config.dbPort} />
+                        <Input onChange={this.bindInputChangeHandler('dbPort')}  value={this.props.config.get('dbPort')} />
                     </Form.Field>
                 </Form.Group>
                 <Form.Group inline>

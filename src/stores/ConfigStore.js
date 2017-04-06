@@ -1,9 +1,10 @@
 import Dispatcher from 'src/dispatcher.js';
+import {Map} from 'immutable';
 
 class ConfigStore {
     constructor() {
         this._eventQueue = [];
-        this._config = {
+        this._config = Map({
             isRunning: false,
             absolutePath: 'D:\\render-server',
             enableProductionDir: true,
@@ -12,7 +13,7 @@ class ConfigStore {
             dbAccount: 'root',
             dbPassword: '123456',
             dbPort: '8877'    
-        };
+        });
     }
     getConfig() {
         return this._config;

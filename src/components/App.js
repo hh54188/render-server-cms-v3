@@ -14,11 +14,12 @@ class App extends React.Component {
         this.state = {
             config: ConfigStore.getConfig()
         }
+        this.updateConfigProperty = this.updateConfigProperty.bind(this);
     }
-    bindConfigInputChangeHandler(fieldName) {
-        return function (event) {
-            console.log(fieldName, event.target.value);
-        }
+    updateConfigProperty(fieldName, newValue) {
+        this.setState({
+            config: this.state.config.set(fieldName, newValue)
+        })
     }
     render() {
         return (
@@ -27,9 +28,9 @@ class App extends React.Component {
                     <Grid.Row></Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <ConfigView 
-                                bindInputChangeHandler={this.bindConfigInputChangeHandler} 
-                                config={this.state.config} 
+                            <ConfigView
+                                updateConfigInterface={this.updateConfigProperty}
+                                config={this.state.config}
                             />
                         </Grid.Column>
                     </Grid.Row>
