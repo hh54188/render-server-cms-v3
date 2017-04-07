@@ -1,16 +1,37 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox, Message } from 'semantic-ui-react';
-import CustomInput from 'components/CustomInput.js';
+import ConfigActions from 'actions/ConfigActions.js';
 
 export default class ConfigView extends React.Component {
     constructor(props) {
         super(props);
         this.bindInputChangeHandler = this.bindInputChangeHandler.bind(this);
+        this.lunchButtonClickHandler = this.lunchButtonClickHandler.bind(this);
+        this.restartButtonClickHandler = this.restartButtonClickHandler.bind(this);
+        this.stopButtonClickHandler = this.stopButtonClickHandler.bind(this);
+        this.saveButtonClickHandler = this.saveButtonClickHandler.bind(this);
+        this.rollbackButtonClickHandler = this.rollbackButtonClickHandler.bind(this);
     }
     bindInputChangeHandler(fieldName) {
         return (event) => {
             this.props.updateConfigInterface(fieldName, event.target.value);
         }
+    }
+    lunchButtonClickHandler() {
+        this.props.setLoadingState(true);
+        ConfigActions.lunchRenderService();
+    }
+    restartButtonClickHandler() {
+        ConfigActions.restartRenderService();
+    }
+    stopButtonClickHandler() {
+        ConfigActions.stopRenderService();
+    }
+    saveButtonClickHandler() {
+        ConfigActions.updateConfig(this.props.config);
+    }
+    rollbackButtonClickHandler() {
+        ConfigActions.restoreConfig();
     }
     render() {
         let renderStateMessage = this.props.config.isRunning
@@ -33,21 +54,21 @@ export default class ConfigView extends React.Component {
 
         let lunchRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
-                <Button type={'button'} size={'small'} color={'orange'}>重新启动 Render Server</Button>
+                <Button onClick={this.restartButtonClickHandler} type={'button'} size={'small'} color={'orange'}>重新启动 Render Server</Button>
             </Form.Field>
             : <Form.Field>
-                <Button type={'button'} size={'small'} primary={true}>启动 Render Server</Button>
+                <Button onClick={this.lunchButtonClickHandler} type={'button'} size={'small'} primary={true}>启动 Render Server</Button>
             </Form.Field>;
         
         let stopRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
-                <Button type={'button'} size={'small'} color={'red'}>终止 Render Server</Button>
+                <Button onClick={this.stopButtonClickHandler} type={'button'} size={'small'} color={'red'}>终止 Render Server</Button>
             </Form.Field>
             : '';
         
         let fieldLabelWidth = 3;
         return (
-            <Form>
+            <Form loading={this.props.UIState.get('loading')}>
                 {/* Render Server 启动状况*/}
                 {renderStateMessage}
                 {/* Render Server 目录*/}

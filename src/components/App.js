@@ -12,13 +12,20 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            config: ConfigStore.getConfig()
+            configDataModel: ConfigStore.getConfig(),
+            configUIModel: ConfigStore.getUIState()
         }
         this.updateConfigProperty = this.updateConfigProperty.bind(this);
+        this.setConfigViewLoadingState = this.setConfigViewLoadingState.bind(this);
     }
     updateConfigProperty(fieldName, newValue) {
         this.setState({
-            config: this.state.config.set(fieldName, newValue)
+            configDataModel: this.state.configDataModel.set(fieldName, newValue)
+        })
+    }
+    setConfigViewLoadingState(loadingState) {
+        this.setState({
+            configUIModel: this.state.configUIModel.set('loading', true)
         })
     }
     render() {
@@ -30,7 +37,9 @@ class App extends React.Component {
                         <Grid.Column>
                             <ConfigView
                                 updateConfigInterface={this.updateConfigProperty}
-                                config={this.state.config}
+                                setLoadingState={this.setConfigViewLoadingState}
+                                config={this.state.configDataModel}
+                                UIState={this.state.configUIModel}
                             />
                         </Grid.Column>
                     </Grid.Row>

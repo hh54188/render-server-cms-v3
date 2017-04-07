@@ -14,9 +14,15 @@ class ConfigStore {
             dbPassword: '123456',
             dbPort: '8877'    
         });
+        this._ui =  Map({
+            loading: false
+        });
     }
     getConfig() {
         return this._config;
+    }
+    getUIState() {
+        return this._ui;
     }
     addListener(callback) {
         this._eventQueue.push(callback);
