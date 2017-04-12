@@ -5,6 +5,7 @@ import ConfigActions from 'actions/ConfigActions.js';
 export default class ConfigView extends React.Component {
     constructor(props) {
         super(props);
+
         this.bindInputChangeHandler = this.bindInputChangeHandler.bind(this);
         this.lunchButtonClickHandler = this.lunchButtonClickHandler.bind(this);
         this.restartButtonClickHandler = this.restartButtonClickHandler.bind(this);
@@ -14,11 +15,16 @@ export default class ConfigView extends React.Component {
     }
     bindInputChangeHandler(fieldName) {
         return (event) => {
-            this.props.updateConfigInterface(fieldName, event.target.value);
+            ConfigActions.updateConfig(fieldName, event.target.value);
         }
     }
+    saveButtonClickHandler() {
+        ConfigActions.saveConfig();
+    }
+    rollbackButtonClickHandler() {
+        ConfigActions.restoreConfig();
+    }
     lunchButtonClickHandler() {
-        this.props.setLoadingState(true);
         ConfigActions.lunchRenderService();
     }
     restartButtonClickHandler() {
@@ -26,12 +32,6 @@ export default class ConfigView extends React.Component {
     }
     stopButtonClickHandler() {
         ConfigActions.stopRenderService();
-    }
-    saveButtonClickHandler() {
-        ConfigActions.updateConfig(this.props.config);
-    }
-    rollbackButtonClickHandler() {
-        ConfigActions.restoreConfig();
     }
     render() {
         let renderStateMessage = this.props.config.isRunning
@@ -49,8 +49,8 @@ export default class ConfigView extends React.Component {
                         content='未检测到端口号被占用'
                         size='small'                        
             />
-        let saveChangeButton = <Button type={'button'} size={'small'} basic={true}>保存</Button>;
-        let rollbackChangeButton =  <Button type={'button'} size={'small'} basic={true}>撤销</Button>;
+        let saveChangeButton = <Button onClick={this.saveButtonClickHandler} type={'button'} size={'small'} basic={true}>保存</Button>;
+        let rollbackChangeButton =  <Button onClick={this.rollbackButtonClickHandler} type={'button'} size={'small'} basic={true}>撤销修改</Button>;
 
         let lunchRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
