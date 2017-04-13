@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input, Button, Checkbox, Message } from 'semantic-ui-react';
+import { Form, Input, Button, Checkbox, Message, Label } from 'semantic-ui-react';
 import ConfigActions from 'actions/ConfigActions.js';
 
 export default class ConfigView extends React.Component {
@@ -14,8 +14,13 @@ export default class ConfigView extends React.Component {
         this.rollbackButtonClickHandler = this.rollbackButtonClickHandler.bind(this);
     }
     bindInputChangeHandler(fieldName) {
-        return (event) => {
-            ConfigActions.updateConfig(fieldName, event.target.value);
+        return (event, data) => {
+            let value;
+            switch (data.type) {
+                case 'text': value = data.value; break;
+                case 'checkbox': value = data.checked; break;
+            }
+            ConfigActions.updateConfig(fieldName, value);
         }
     }
     saveButtonClickHandler() {
@@ -49,8 +54,12 @@ export default class ConfigView extends React.Component {
                         content='未检测到端口号被占用'
                         size='small'                        
             />
-        let saveChangeButton = <Button onClick={this.saveButtonClickHandler} type={'button'} size={'small'} basic={true}>保存</Button>;
-        let rollbackChangeButton =  <Button onClick={this.rollbackButtonClickHandler} type={'button'} size={'small'} basic={true}>撤销修改</Button>;
+        let saveChangeButton = this.props.UIState.get('dataIsDirty')
+            ? <Button onClick={this.saveButtonClickHandler} type={'button'} size={'small'} basic={true}>保存</Button>
+            : '' ;
+        let rollbackChangeButton =  this.props.UIState.get('dataIsDirty')
+            ? <Button onClick={this.rollbackButtonClickHandler} type={'button'} size={'small'} basic={true}>撤销修改</Button>
+            : '';
 
         let lunchRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
@@ -115,6 +124,7 @@ export default class ConfigView extends React.Component {
                     </Form.Field>
                     <Form.Field>
                         <Input onChange={this.bindInputChangeHandler('port')} value={this.props.config.get('port')} />                
+                        {/*<Label pointing='left'>That name is taken!</Label>*/}
                     </Form.Field>
                 </Form.Group> 
                 {/* 连接的线上数据库名称 */}

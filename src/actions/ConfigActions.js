@@ -17,7 +17,7 @@ const Actions = {
     saveConfig() {
         Dispatcher.dispatch({
             type: ActionTypes.SAVE_RS_CONFIG
-        })
+        });
     },
     lunchRenderService() {
         Dispatcher.dispatch({

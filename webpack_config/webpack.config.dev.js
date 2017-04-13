@@ -10,9 +10,10 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'components': path.resolve(path.join('.', 'src', 'components')),
             'src': path.resolve(path.join('.', 'src')),
+            'components': path.resolve(path.join('.', 'src', 'components')),
             'stores': path.resolve(path.join('.', 'src', 'stores')),
+            'remotes': path.resolve(path.join('.', 'src', 'remotes')),
             'actions': path.resolve(path.join('.', 'src', 'actions'))
         }
     },
