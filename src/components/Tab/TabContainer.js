@@ -1,16 +1,21 @@
 import React from 'react'
 
 export default class TabContainer extends React.Component {
+    constructor() {
+        super();
+        this.tabId = 'tab-' + parseInt((1 + (1000 - 1) * Math.random()), 10);
+    }
     componentDidMount() {
-        let items = document.querySelectorAll('.menu .item');
-        let tabs = [].slice.call(document.querySelectorAll('.tab.segment'));
+        let myTab = this.refs[this.tabId];
+        let items = myTab.querySelectorAll('.tab-custom.menu .item');
+        let tabs = [].slice.call(myTab.querySelectorAll('.tab.segment'));
 
         [...items].forEach((ele) => {
 
             let isActive = ele.className.indexOf('active') > -1;
             let tabName = ele.getAttribute('data-tab');
             let tab = document.querySelector('.tab.segment[data-tab=' + tabName + ']');
-            
+
             if (isActive) {
                 tab.style.display = 'block';
             } else {
@@ -35,7 +40,7 @@ export default class TabContainer extends React.Component {
     }    
     render() {
         return (
-            <div>
+            <div ref={this.tabId} className="tab-custom-container">
                 {this.props.children}
             </div>
         )

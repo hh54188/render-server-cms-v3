@@ -55,6 +55,24 @@ class App extends React.Component {
         })
     }
     render() {
+        let tabHeaderArr = [
+            {
+                active: false,
+                name: 'config',
+                text: 'Render配置'
+            },
+            {
+                active: true,
+                name: 'template',
+                text: '模板'                
+            },
+            {
+                active: false,
+                name: 'create-template',
+                text: '创建模板'
+            }
+        ];
+
         return (
             <Container fluid={true}>
                 <ErrorModal 
@@ -69,16 +87,21 @@ class App extends React.Component {
                     <Grid.Row>
                         <Grid.Column>
                             <TabContainer>
-                                <TabHeaderView />                            
+                                <TabHeaderView data={tabHeaderArr} />
+
                                 <TabContentView name={'config'}>
                                     <ConfigView
                                         config={this.state.configDataModel}
                                         UIState={this.state.configUIModel}
                                     />
                                 </TabContentView>
+                                
                                 <TabContentView name={'template'}>
                                     <TemplateView />
                                 </TabContentView>
+                                
+                                <TabContentView name={'create-template'}>
+                                </TabContentView>                                
                             </TabContainer>
                         </Grid.Column>
                     </Grid.Row>
