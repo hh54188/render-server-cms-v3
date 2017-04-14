@@ -6,6 +6,7 @@ const ActionTypes = {
     SHOW_ERROR_MODAL: 'SHOW_ERROR_MODAL',
     // 关闭错误提示框
     CLOSE_ERROR_MODAL: 'CLOSE_ERROR_MODAL',
+    
     /*
         Config
     */

@@ -60,6 +60,7 @@ function kill() {
 }
 
 function getConfig(renderSrcPath) {
+    console.log(renderSrcPath);
 	oojs.setPath(renderSrcPath);
 	var configObj = oojs.using('rs.common.config.global');
 	configObj = oojs.reload('rs.common.config.global');

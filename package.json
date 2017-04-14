@@ -1,8 +1,10 @@
 {
   "name": "render-server-cms",
+  "main": "main.js",
   "version": "0.0.1",
   "dependencies": {
     "immutable": "^3.8.1",
+    "node-oojs": "^1.4.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "semantic-ui-css": "^2.2.10",
@@ -21,6 +23,8 @@
     "webpack-dev-server": "^2.4.2"
   },
   "scripts": {
-    "dev": "webpack-dev-server --config webpack_config/webpack.config.dev.js"
+    "electron": ".\\electron\\electron.exe .",
+    "server": "webpack-dev-server --config webpack_config/webpack.config.dev.js",
+    "dev": "webpack --config webpack_config/webpack.config.dev.js"
   }
 }

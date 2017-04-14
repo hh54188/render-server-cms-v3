@@ -9,7 +9,7 @@ export default class ErrorModal extends React.Component {
     render() {
         return (
             <Modal open={this.props.open} size={'small'} dimmer={'blurring'}>
-                <Modal.Header>糟糕，出错了！</Modal.Header>
+                <Modal.Header> <span>糟糕，出错了！</span> </Modal.Header>
                 <Modal.Content image>
                     <Modal.Description>
                         {/*<Header>与服务器交互发生错误</Header>*/}
@@ -18,7 +18,7 @@ export default class ErrorModal extends React.Component {
                 </Modal.Content>
                 <Modal.Actions>
                     <Button onClick={this.confirmButtonClickHandler} primary={true}>
-                        <Icon name='checkmark' /> 确定
+                        <Icon name='checkmark' /><span>确定</span>
                     </Button>
                 </Modal.Actions>
             </Modal>

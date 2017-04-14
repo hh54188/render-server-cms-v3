@@ -4,7 +4,7 @@ class TabHeaderItem extends React.Component {
     render () {
         let classContent = this.props.active ? "active item" : "item";
         return (
-            <a className={classContent} data-tab={this.props.name}>{this.props.text}</a>            
+            <a className={classContent} data-tab={this.props.name}><span>{this.props.text}</span></a>            
         )
     }
 }

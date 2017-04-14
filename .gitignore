@@ -1,4 +1,10 @@
 src/build
+electron
+bower_components
+
+*.eot
+*.svg
+*.ttf
 
 #log
 logs

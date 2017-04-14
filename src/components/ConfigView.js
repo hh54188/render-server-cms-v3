@@ -1,6 +1,7 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox, Message, Label } from 'semantic-ui-react';
 import ConfigActions from 'actions/ConfigActions.js';
+import electronHelper from 'src/electronHelper.js';
 
 export default class ConfigView extends React.Component {
     constructor(props) {
@@ -22,6 +23,9 @@ export default class ConfigView extends React.Component {
             }
             ConfigActions.updateConfig(fieldName, value);
         }
+    }
+    selectRSButtonClickHandler() {
+        electronHelper.openFileDialog();
     }
     saveButtonClickHandler() {
         ConfigActions.saveConfig();
@@ -55,23 +59,23 @@ export default class ConfigView extends React.Component {
                         size='small'                        
             />
         let saveChangeButton = this.props.UIState.get('dataIsDirty')
-            ? <Button onClick={this.saveButtonClickHandler} type={'button'} size={'small'} basic={true}>保存</Button>
+            ? <Button onClick={this.saveButtonClickHandler} type={'button'} size={'small'} basic={true}><span>保存</span></Button>
             : '' ;
         let rollbackChangeButton =  this.props.UIState.get('dataIsDirty')
-            ? <Button onClick={this.rollbackButtonClickHandler} type={'button'} size={'small'} basic={true}>撤销修改</Button>
+            ? <Button onClick={this.rollbackButtonClickHandler} type={'button'} size={'small'} basic={true}><span>撤销修改</span></Button>
             : '';
 
         let lunchRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
-                <Button onClick={this.restartButtonClickHandler} type={'button'} size={'small'} color={'orange'}>重新启动 Render Server</Button>
+                <Button onClick={this.restartButtonClickHandler} type={'button'} size={'small'} color={'orange'}><span>重启 Render Server</span></Button>
             </Form.Field>
             : <Form.Field>
-                <Button onClick={this.lunchButtonClickHandler} type={'button'} size={'small'} primary={true}>启动 Render Server</Button>
+                <Button onClick={this.lunchButtonClickHandler} type={'button'} size={'small'} primary={true}><span>启动 Render Server</span></Button>
             </Form.Field>;
         
         let stopRenderServerButton = this.props.config.isRunning
             ? <Form.Field>
-                <Button onClick={this.stopButtonClickHandler} type={'button'} size={'small'} color={'red'}>终止 Render Server</Button>
+                <Button onClick={this.stopButtonClickHandler} type={'button'} size={'small'} color={'red'}><span>终止 Render Server</span></Button>
             </Form.Field>
             : '';
         
@@ -101,7 +105,7 @@ export default class ConfigView extends React.Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <Button size={'small'} basic={true} type={'button'}>重新选择目录</Button>
+                        <Button onClick={this.selectRSButtonClickHandler} size={'small'} basic={true} type={'button'}><span>重新选择目录</span></Button>
                     </Form.Field>
                 </Form.Group>
                 {/* 是否启用 production 目录*/}

@@ -8,32 +8,40 @@ import AppActions from 'actions/AppActions.js';
 
 class ConfigStore {
     constructor() {
-        this._config = Map({
-            isRunning: false,
-            absolutePath: 'D:\\render-server',
-            enableProductionDir: true,
-            port: '8124',
-            dbName: 'nova_ts_liguangyi',
-            dbAccount: 'root',
-            dbPassword: '123456',
-            dbPort: '8877'    
-        });
 
-        this._configBackup = Map({
-            isRunning: false,
-            absolutePath: 'D:\\render-server',
-            enableProductionDir: true,
-            port: '8124',
-            dbName: 'nova_ts_liguangyi',
-            dbAccount: 'root',
-            dbPassword: '123456',
-            dbPort: '8877'    
-        });
-
+        this._config = Map({});
+        this._configBackup = this._config;
         this._ui =  Map({
-            loading: false,
+            loading: true,
             dataIsDirty: false
-        });
+        });        
+
+        // this._config = Map({
+        //     isRunning: false,
+        //     absolutePath: 'D:\\render-server',
+        //     enableProductionDir: true,
+        //     port: '8124',
+        //     dbName: 'nova_ts_liguangyi',
+        //     dbAccount: 'root',
+        //     dbPassword: '123456',
+        //     dbPort: '8877'    
+        // });
+
+        // this._configBackup = Map({
+        //     isRunning: false,
+        //     absolutePath: 'D:\\render-server',
+        //     enableProductionDir: true,
+        //     port: '8124',
+        //     dbName: 'nova_ts_liguangyi',
+        //     dbAccount: 'root',
+        //     dbPassword: '123456',
+        //     dbPort: '8877'    
+        // });
+
+        // this._ui =  Map({
+        //     loading: false,
+        //     dataIsDirty: false
+        // });
 
         Dispatcher.register((payload) => {
             switch (payload.type) {

@@ -2,12 +2,18 @@ import {Map} from 'immutable';
 import myEmitter from 'src/myEmitter.js';
 import Dispatcher from 'src/dispatcher.js';
 import ActionTypes from 'actions/ActionTypes.js';
+import electronHelper from 'src/electronHelper.js';
 
 class AppStore {
     constructor() {
+        this.initialize();
+        
         this._ui = Map({
             showErrorModal: false,
-            errorModalMessage: ''
+            errorModalMessage: '',
+
+            showSelectDirectoryModal: false,
+            rsDirectoryIsWrong: false
         });
 
         Dispatcher.register((payload) => {
@@ -24,6 +30,9 @@ class AppStore {
             }
         });
 
+    }
+    initialize() {
+        electronHelper.readConfigFile();
     }
     getUIState() {
         return this._ui;

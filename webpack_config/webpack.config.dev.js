@@ -6,7 +6,7 @@ module.exports = {
     entry: './src/components/App.js',
     context: path.join(__dirname, '..'),
     output: {
-        filename: './src/build/bundle.js'
+        filename: './src/scripts/bundle.js'
     },
     resolve: {
         alias: {

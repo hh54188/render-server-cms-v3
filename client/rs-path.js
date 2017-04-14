@@ -17,6 +17,8 @@ function setRenderServerPath(renderServerPath, isProduction) {
     if (!util.isAbsolutePath(RENDER_SERVER_PATH)) {
         RENDER_SERVER_PATH = path.resolve(RENDER_SERVER_PATH);
     }
+
+    return this;
 }
 
 function getRenderServerPath() {

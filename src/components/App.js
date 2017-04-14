@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import {Container, Grid} from 'semantic-ui-react';
 import ErrorModal from 'components/ErrorModal.js';
+import SelectDirectoryModal from 'components/SelectDirectoryModal.js';
 
 import ConfigView from 'components/ConfigView.js';
 import ConfigStore from 'stores/ConfigStore.js';
@@ -17,8 +18,7 @@ import AppStore from 'stores/AppStore.js';
 
 import myEmitter from 'src/myEmitter.js';
 
-
-require('semantic-ui-css/semantic.min.css');
+// require('semantic-ui-css/semantic.min.css');
 
 class App extends React.Component {
     constructor(props) {
@@ -57,12 +57,12 @@ class App extends React.Component {
     render() {
         let tabHeaderArr = [
             {
-                active: false,
+                active: true,
                 name: 'config',
                 text: 'Render配置'
             },
             {
-                active: true,
+                active: false,
                 name: 'template',
                 text: '模板'                
             },
@@ -75,6 +75,10 @@ class App extends React.Component {
 
         return (
             <Container fluid={true}>
+                <SelectDirectoryModal 
+                    open={this.state.appUIModel.get('showSelectDirectoryModal')}
+                    error={this.state.appUIModel.get('rsDirectoryIsWrong')}
+                />
                 <ErrorModal 
                     open={this.state.appUIModel.get('showErrorModal')} 
                     message={this.state.appUIModel.get('errorModalMessage')} 
