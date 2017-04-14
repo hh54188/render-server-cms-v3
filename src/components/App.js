@@ -17,6 +17,7 @@ import TabContentView from 'components/Tab/TabContent.js';
 import AppStore from 'stores/AppStore.js';
 
 import myEmitter from 'src/myEmitter.js';
+import {Map} from 'immutable';
 
 // require('semantic-ui-css/semantic.min.css');
 
@@ -24,10 +25,10 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            configDataModel: ConfigStore.getConfig(),
+            configDataModel: Map({}),
             configUIModel: ConfigStore.getUIState(),
-            appUIModel: AppStore.getUIState()
-        }
+            appUIModel: ConfigStore.getUIState()
+        };
         this.updateConfigProperty = this.updateConfigProperty.bind(this);
         this.setConfigViewLoadingState = this.setConfigViewLoadingState.bind(this);
 

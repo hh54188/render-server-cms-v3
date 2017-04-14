@@ -1,7 +1,6 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox, Message, Label } from 'semantic-ui-react';
 import ConfigActions from 'actions/ConfigActions.js';
-import electronHelper from 'src/electronHelper.js';
 
 export default class ConfigView extends React.Component {
     constructor(props) {
@@ -25,7 +24,6 @@ export default class ConfigView extends React.Component {
         }
     }
     selectRSButtonClickHandler() {
-        electronHelper.openFileDialog();
     }
     saveButtonClickHandler() {
         ConfigActions.saveConfig();

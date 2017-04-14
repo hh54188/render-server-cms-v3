@@ -2,6 +2,11 @@ import Dispatcher from 'src/dispatcher.js';
 import ActionTypes from 'actions/ActionTypes.js';
 
 const Actions = {
+    updateAllConfig() {
+        Dispatcher.dispatch({
+            type: ActionTypes.UPDATE_ALL_RS_CONFIG
+        });
+    },
     updateConfig(fieldName, value) {
         Dispatcher.dispatch({
             type: ActionTypes.UPDATE_RS_CONFIG,

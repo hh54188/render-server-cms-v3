@@ -11,7 +11,17 @@ const Actions = {
     closeErrorModal() {
         Dispatcher.dispatch({
             type: ActionTypes.CLOSE_ERROR_MODAL
-        })
+        });
+    },
+    selectRsDirectory() {
+        Dispatcher.dispatch({
+            type: ActionTypes.SELECT_RS_DIRECTORY
+        });
+    },
+    openDirectoryDialog() {
+        Dispatcher.dispatch({
+            type: ActionTypes.OPEN_DIRECTORY_DIALOG
+        });        
     }
 }
 

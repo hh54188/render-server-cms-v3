@@ -6,11 +6,16 @@ const ActionTypes = {
     SHOW_ERROR_MODAL: 'SHOW_ERROR_MODAL',
     // 关闭错误提示框
     CLOSE_ERROR_MODAL: 'CLOSE_ERROR_MODAL',
-    
+    // 打开初始对话框
+    SELECT_RS_DIRECTORY: 'SELECT_RS_DIRECTORY',
+    // 打开系统对话框选择 RS 目录
+    OPEN_DIRECTORY_DIALOG: 'OPEN_DIRECTORY_DIALOG',
     /*
         Config
     */
-    // 更新本地 Store
+    // 从 Remote 更新本地 Store
+    UPDATE_ALL_RS_CONFIG: 'UPDATE_ALL_RS_CONFIG',
+    // 从 View 更新本地 Store
     UPDATE_RS_CONFIG: 'UPDATE_RS_CONFIG',
     // 将 Store 数据存储至 RS 中
     SAVE_RS_CONFIG: 'SAVE_RS_CONFIG',

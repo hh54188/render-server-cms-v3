@@ -1,11 +1,11 @@
 import electronProxy from 'src/electronProxy.js';
 
-class ConfigRemote {
+class AppRemote {
     constructor() {
     }
-    getConfig() {
+    openFileDialog() {
         return new Promise((resolve, reject) => {
-            electronProxy.readConfigFile((err, cfgObj) => {
+            electronProxy.openFileDialog((err, cfgObj) => {
                 if (err) {
                     reject(err);
                     return;
@@ -14,6 +14,7 @@ class ConfigRemote {
             })
         });
     }
+    
 }
 
-export default new ConfigRemote();
+export default new AppRemote();

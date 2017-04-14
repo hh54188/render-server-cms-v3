@@ -14,7 +14,8 @@ class ConfigStore {
         this._ui =  Map({
             loading: true,
             dataIsDirty: false
-        });        
+        });
+
 
         // this._config = Map({
         //     isRunning: false,
@@ -27,24 +28,17 @@ class ConfigStore {
         //     dbPort: '8877'    
         // });
 
-        // this._configBackup = Map({
-        //     isRunning: false,
-        //     absolutePath: 'D:\\render-server',
-        //     enableProductionDir: true,
-        //     port: '8124',
-        //     dbName: 'nova_ts_liguangyi',
-        //     dbAccount: 'root',
-        //     dbPassword: '123456',
-        //     dbPort: '8877'    
-        // });
-
-        // this._ui =  Map({
-        //     loading: false,
-        //     dataIsDirty: false
-        // });
-
         Dispatcher.register((payload) => {
+            console.log(payload.type);
             switch (payload.type) {
+                case ActionTypes.UPDATE_ALL_RS_CONFIG:
+                    ConfigRemote.getConfig().then(() => {        
+                        debugger
+                        myEmitter.emit('CONFIG_STORE_CHANGED');                    
+                    }, (errMessage) => {
+                        AppActions.selectRsDirectory();
+                    })
+                break;
                 case ActionTypes.UPDATE_RS_CONFIG:
                     this._config = this._config.set(payload.fieldName, payload.value);
                     
@@ -65,20 +59,22 @@ class ConfigStore {
                 break;
                 case ActionTypes.SAVE_RS_CONFIG:
                     this._ui = this._ui.set('dataIsDirty', false);
+                    this._ui = this._ui.set('loading', true);
 
-                    this._ui = this._ui.set('loading', true);                    
-                    ConfigRemote.save(this._config.toJSON()).then((message) => {
-                        this._ui = this._ui.set('loading', false);                    
-                    }, (failedMessage) => {
-                        this._ui = this._ui.set('loading', false);
-                        ConfigActions.restoreConfig();
-                        AppActions.showErrorModal(failedMessage.toString());
-                    });
+                    // ConfigRemote.save(this._config.toJSON()).then((message) => {
+                    //     this._ui = this._ui.set('loading', false);                    
+                    // }, (failedMessage) => {
+                    //     this._ui = this._ui.set('loading', false);
+                    //     ConfigActions.restoreConfig();
+                    //     AppActions.showErrorModal(failedMessage.toString());
+                    // });
 
                     myEmitter.emit('CONFIG_STORE_CHANGED');                    
                 break;
             }
         });
+
+        ConfigActions.updateAllConfig();        
     }
     getConfig() {
         return this._config;

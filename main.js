@@ -16,9 +16,18 @@ const fs = require('fs');
 ipc.on('open-directory-dialog', (event) => {
     dialog.showOpenDialog({
         properties: ['openDirectory']
-    }, (directory) => {
-        if (directory) {
-            event.sender.send('selected-directory', directory);
+    }, (directoryPathArr) => {
+        if (directoryPathArr && directoryPathArr.length) {
+            let directoryPath = directoryPathArr[0];
+            let errorMessage = pathIsNotAvailable(directoryPath);
+
+            if (errorMessage) {
+                console.log('path not available');
+                event.sender.send('selected-directory-failed', errorMessage);
+            } else {
+                console.log('path available');
+                event.sender.send('selected-directory-successed', directoryPath);
+            }
         }
     })
 })
@@ -49,28 +58,17 @@ ipc.on('read-config-file', (event) => {
         return;
     }
 
-    // 配置文件中rs路径存在但在系统中找不到
-    if (!checkFileExist(fileContent.path)) {
-        readFileFailed("The file of the path doesn't exist ");
-        return;
-    }    
-
-    // 配置文件中rs路径是一个文件非文件夹
-    if (!checkFileIsFolder(fileContent.path)) {
-        readFileFailed("The file of the path is not a directory");
-        return;
+    let errorMessage = ''
+    if (errorMessage = pathIsNotAvailable(fileContent.path)) {
+        readFileFailed(errorMessage);
+        return;        
     }
 
-    // 配置文件中目录并非是rs目录
-    if (!checkDirectoryIsRS(fileContent.path)) {
-        readFileFailed("The directory is not render server directory");
-        return;
-    }
 
-    let srcPath = rsPath.setRenderServerPath(fileContent.path, false).getSrcPath();
-    let cfgObj = render.getConfig(srcPath);
-    console.log(cfgObj);
-    readFileSuccessed(fileContent);
+    // let srcPath = rsPath.setRenderServerPath(fileContent.path, false).getSrcPath();
+    // let cfgObj = render.getConfig(srcPath);
+    // console.log(cfgObj);
+    // readFileSuccessed(fileContent);
     
 });
 
@@ -82,15 +80,34 @@ function checkFileIsFolder(path_string) {
     return fs.lstatSync(path_string).isDirectory();
 }
 
+function pathIsNotAvailable(path_string) {
+    
+    // 配置文件中rs路径存在但在系统中找不到
+    if (!checkFileExist(path_string)) {
+        return "The file of the path doesn't exist ";
+    }    
+    // 配置文件中rs路径是一个文件非文件夹
+    if (!checkFileIsFolder(path_string)) {
+        return "The file of the path is not a directory";        
+    }
+
+    // 配置文件中目录并非是rs目录
+    if (!checkDirectoryIsRS(path_string)) {
+        return "The directory is not render server directory";        
+    }
+
+    return false;
+}
+
 function checkDirectoryIsRS(path_string) {
     let files = fs.readdirSync(path_string);
     if (!files || !files.length) {
         return false;
     }
 
-    if (files.indexOf('production') < -1 
-        || files.indexOf('master.js') < -1
-        || files.indexOf('cache') < -1) {
+    if (files.indexOf('production') < 0 
+        && files.indexOf('master.js') < 0
+        && files.indexOf('cache') < 0) {
         return false;
     }
 
@@ -114,6 +131,8 @@ function createWindow () {
         width: screenWidth, 
         height: screenHeight,
     })
+
+    mainWindow.setMenu(null);
 
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
