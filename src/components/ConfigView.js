@@ -88,8 +88,8 @@ export default class ConfigView extends React.Component {
                         <label>Render Server 路径</label>
                     </Form.Field>
                     <Form.Field>
-                        <Input 
-                            onChange={this.bindInputChangeHandler('absolutePath')}
+                        <Input
+                            onChange={() => {}}
                             action={
                                 { 
                                     basic: true, 

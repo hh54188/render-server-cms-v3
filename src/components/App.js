@@ -25,7 +25,16 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            configDataModel: Map({}),
+            configDataModel: Map({
+                isRunning: false,
+                absolutePath: 'sample',
+                enableProductionDir: true,
+                port: 'sample',
+                dbName: 'sample',
+                dbAccount: 'sample',
+                dbPassword: 'sample',
+                dbPort: 'sample'    
+            }),
             configUIModel: ConfigStore.getUIState(),
             appUIModel: ConfigStore.getUIState()
         };

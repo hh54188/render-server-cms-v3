@@ -8,8 +8,7 @@ const url = require('url');
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
 
-const rsPath = require('./client/rs-path.js');
-const render = require('./client/render.js');
+const renderSupervisor = require('./client/renderSupervisor.js');
 
 const fs = require('fs');
 
@@ -68,10 +67,10 @@ ipc.on('read-config-file', (event) => {
         return;        
     }
 
-
-    let srcPath = rsPath.setRenderServerPath(fileContent.path, false).getSrcPath();
-    let cfgObj = render.getConfig(srcPath);
-    readFileSuccessed(fileContent);
+    renderSupervisor.setRsPath(fileContent.path, fileContent.production);
+    renderSupervisor.getConfig((cfgObj) => {
+        readFileSuccessed(cfgObj);
+    })
 });
 
 function checkFileExist(path_string) {
@@ -108,8 +107,8 @@ function checkDirectoryIsRS(path_string) {
     }
 
     if (files.indexOf('production') < 0 
-        && files.indexOf('master.js') < 0
-        && files.indexOf('cache') < 0) {
+        || files.indexOf('master.js') < 0
+        || files.indexOf('cache') < 0) {
         return false;
     }
 

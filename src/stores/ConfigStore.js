@@ -9,30 +9,20 @@ import AppActions from 'actions/AppActions.js';
 class ConfigStore {
     constructor() {
 
-        this._config = Map({});
+        this._config = Map();
         this._configBackup = this._config;
         this._ui =  Map({
             loading: true,
             dataIsDirty: false
         });
 
-
-        // this._config = Map({
-        //     isRunning: false,
-        //     absolutePath: 'D:\\render-server',
-        //     enableProductionDir: true,
-        //     port: '8124',
-        //     dbName: 'nova_ts_liguangyi',
-        //     dbAccount: 'root',
-        //     dbPassword: '123456',
-        //     dbPort: '8877'    
-        // });
-
         Dispatcher.register((payload) => {
             switch (payload.type) {
                 case ActionTypes.UPDATE_ALL_RS_CONFIG:
                     ConfigRemote.getConfig().then((cfgObj) => {        
-                        debugger
+                        this._config = Map(cfgObj);
+                        this._ui = this._ui.set('loading', false);
+                        myEmitter.emit('CONFIG_STORE_CHANGED');                        
                     }, (errMessage) => {
                         AppActions.selectRsDirectory();
                     })

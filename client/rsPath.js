@@ -68,12 +68,16 @@ function getStyleFile(fileName, isProduction) {
 module.exports = {
     setRenderServerPath: setRenderServerPath,
     getRenderServerPath: getRenderServerPath,
+
     getRootPath: getRootPath,
     getSrcPath: getSrcPath,
+
     getConfigFilePath: getConfigFilePath,
     getCacheFolderPath: getCacheFolderPath,
+
     getTemplateFolderPath: getTemplateFolderPath,
     getSubTemplateFolderAndFilePath: getSubTemplateFolderAndFilePath,
+    
     getStyleFolderPath: getStyleFolderPath,
     getStyleFile: getStyleFile
 }
