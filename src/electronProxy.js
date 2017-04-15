@@ -11,7 +11,7 @@ class ElectronProxy {
             let queueName = 'openDirectoryDialogCallbackQueue';
             while (this[queueName].length) {
                 let callback = this.popCallbackQueue(queueName);
-                console.log('selected-directory-successed--->', directory);
+                console.log('electronProxy: selected-directory-successed--->', directory);
                 callback(null, directory);
             }            
         });
@@ -20,7 +20,7 @@ class ElectronProxy {
             let queueName = 'openDirectoryDialogCallbackQueue';
             while (this[queueName].length) {
                 let callback = this.popCallbackQueue(queueName);
-                console.log('selected-directory-failed--->', errorMessage);
+                console.log('electronProxy: selected-directory-failed--->', errorMessage);
                 callback(errorMessage);
             }            
         });        
@@ -29,7 +29,7 @@ class ElectronProxy {
             let queueName = 'readConfigFileCallbackQueue';
             while (this[queueName].length) {
                 let callback = this.popCallbackQueue(queueName);
-                console.log('read-config-failed--->', errorMessage);
+                console.log('electronProxy: read-config-failed--->', errorMessage);
                 callback(errorMessage);
             }
         });        
@@ -38,7 +38,7 @@ class ElectronProxy {
             let queueName = 'readConfigFileCallbackQueue';
             while (this[queueName].length) {
                 let callback = this.popCallbackQueue(queueName);
-                console.log('read-config-successed--->', cfgObj);
+                console.log('electronProxy: read-config-successed--->', cfgObj);
                 callback(null, cfgObj);
             }            
         });                

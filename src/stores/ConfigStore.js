@@ -29,12 +29,10 @@ class ConfigStore {
         // });
 
         Dispatcher.register((payload) => {
-            console.log(payload.type);
             switch (payload.type) {
                 case ActionTypes.UPDATE_ALL_RS_CONFIG:
-                    ConfigRemote.getConfig().then(() => {        
+                    ConfigRemote.getConfig().then((cfgObj) => {        
                         debugger
-                        myEmitter.emit('CONFIG_STORE_CHANGED');                    
                     }, (errMessage) => {
                         AppActions.selectRsDirectory();
                     })

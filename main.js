@@ -21,11 +21,15 @@ ipc.on('open-directory-dialog', (event) => {
             let directoryPath = directoryPathArr[0];
             let errorMessage = pathIsNotAvailable(directoryPath);
 
+            let fileContent = fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8');
+            let configObj = JSON.parse(fileContent);
+
+            configObj.path = directoryPath;
+            fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(configObj), 'utf-8');
+
             if (errorMessage) {
-                console.log('path not available');
                 event.sender.send('selected-directory-failed', errorMessage);
             } else {
-                console.log('path available');
                 event.sender.send('selected-directory-successed', directoryPath);
             }
         }
@@ -65,11 +69,9 @@ ipc.on('read-config-file', (event) => {
     }
 
 
-    // let srcPath = rsPath.setRenderServerPath(fileContent.path, false).getSrcPath();
-    // let cfgObj = render.getConfig(srcPath);
-    // console.log(cfgObj);
-    // readFileSuccessed(fileContent);
-    
+    let srcPath = rsPath.setRenderServerPath(fileContent.path, false).getSrcPath();
+    let cfgObj = render.getConfig(srcPath);
+    readFileSuccessed(fileContent);
 });
 
 function checkFileExist(path_string) {
@@ -132,7 +134,7 @@ function createWindow () {
         height: screenHeight,
     })
 
-    mainWindow.setMenu(null);
+    // mainWindow.setMenu(null);
 
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),

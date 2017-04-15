@@ -10,6 +10,10 @@ const ActionTypes = {
     SELECT_RS_DIRECTORY: 'SELECT_RS_DIRECTORY',
     // 打开系统对话框选择 RS 目录
     OPEN_DIRECTORY_DIALOG: 'OPEN_DIRECTORY_DIALOG',
+    // 目录对话框提示错误
+    SET_DIRECTORY_DIALOG_ERROR: 'SET_DIRECTORY_DIALOG_ERROR',
+    // 关闭目录对话框
+    CLOSE_DIRECTORY_DIALOG: 'CLOSE_DIRECTORY_DIALOG',
     /*
         Config
     */

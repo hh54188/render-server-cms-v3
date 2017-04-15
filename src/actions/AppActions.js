@@ -22,6 +22,16 @@ const Actions = {
         Dispatcher.dispatch({
             type: ActionTypes.OPEN_DIRECTORY_DIALOG
         });        
+    },
+    setDirectoryDialogError() {
+        Dispatcher.dispatch({
+            type: ActionTypes.SET_DIRECTORY_DIALOG_ERROR
+        });  
+    },
+    closeDirectoryDialog() {
+        Dispatcher.dispatch({
+            type: ActionTypes.CLOSE_DIRECTORY_DIALOG
+        });  
     }
 }
 
