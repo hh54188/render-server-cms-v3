@@ -1,6 +1,7 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox, Message, Label } from 'semantic-ui-react';
 import ConfigActions from 'actions/ConfigActions.js';
+import AppActions from 'actions/AppActions.js';
 
 export default class ConfigView extends React.Component {
     constructor(props) {
@@ -24,6 +25,7 @@ export default class ConfigView extends React.Component {
         }
     }
     selectRSButtonClickHandler() {
+        AppActions.selectRsDirectory();
     }
     saveButtonClickHandler() {
         ConfigActions.saveConfig();
@@ -38,10 +40,14 @@ export default class ConfigView extends React.Component {
         ConfigActions.restartRenderService();
     }
     stopButtonClickHandler() {
+        console.log('stopButtonClickHandler');
         ConfigActions.stopRenderService();
     }
     render() {
-        let renderStateMessage = this.props.config.isRunning
+
+        let lunchState = this.props.config.get('lunchState');
+        console.log('lunchState------>', lunchState);
+        let renderStateMessage = lunchState === 'RUNNING'
             ?<Message
                         positive={true}
                         icon='smile'
@@ -62,16 +68,41 @@ export default class ConfigView extends React.Component {
         let rollbackChangeButton =  this.props.UIState.get('dataIsDirty')
             ? <Button onClick={this.rollbackButtonClickHandler} type={'button'} size={'small'} basic={true}><span>撤销修改</span></Button>
             : '';
-
-        let lunchRenderServerButton = this.props.config.isRunning
-            ? <Form.Field>
-                <Button onClick={this.restartButtonClickHandler} type={'button'} size={'small'} color={'orange'}><span>重启 Render Server</span></Button>
-            </Form.Field>
-            : <Form.Field>
-                <Button onClick={this.lunchButtonClickHandler} type={'button'} size={'small'} primary={true}><span>启动 Render Server</span></Button>
-            </Form.Field>;
         
-        let stopRenderServerButton = this.props.config.isRunning
+        // Render 启动中
+        let waitingButton = lunchState === 'WAITING'
+            ? <Form.Field>
+                <Button basic disabled type={'button'} size={'small'} primary={true}>
+                    <span>Render Server启动中(请等待{this.props.config.get('lunchInfo')}秒)</span>
+                </Button>
+            </Form.Field>
+            : '';
+        
+        // Render 未运行或者运行失败 
+        let lunchRenderServerButton = '';
+        if (lunchState === 'RUNNING') {
+            lunchRenderServerButton = 
+                <Form.Field>                    
+                    <Button onClick={this.restartButtonClickHandler} type={'button'} size={'small'} color={'orange'}>
+                        <span>重启 Render Server</span>
+                    </Button>
+                </Form.Field>
+        } else if (lunchState === "OFFLINE"
+                    || lunchState === "TIMEOUT"
+                    || lunchState === "ERROR") {
+            lunchRenderServerButton = 
+                <Form.Field>
+                    <Button onClick={this.lunchButtonClickHandler} type={'button'} size={'small'} primary={true}><span>启动 Render Server</span></Button>
+                    {
+                        (lunchState == 'TIMEOUT' || lunchState == 'ERROR')
+                            ? <Label basic color='red' pointing='left'>启动超时或者发生错误</Label>
+                            : ''
+                    }
+                </Form.Field>
+        }
+
+        // 终止 Render Server 运行
+        let stopRenderServerButton = lunchState === 'RUNNING'
             ? <Form.Field>
                 <Button onClick={this.stopButtonClickHandler} type={'button'} size={'small'} color={'red'}><span>终止 Render Server</span></Button>
             </Form.Field>
@@ -103,7 +134,11 @@ export default class ConfigView extends React.Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <Button onClick={this.selectRSButtonClickHandler} size={'small'} basic={true} type={'button'}><span>重新选择目录</span></Button>
+                        <Button 
+                            onClick={this.selectRSButtonClickHandler} 
+                            size={'small'} 
+                            basic={true} 
+                            type={'button'}><span>重新选择目录</span></Button>
                     </Form.Field>
                 </Form.Group>
                 {/* 是否启用 production 目录*/}
@@ -118,7 +153,19 @@ export default class ConfigView extends React.Component {
                             toggle 
                         />
                     </Form.Field>                         
-                </Form.Group>      
+                </Form.Group> 
+                <Form.Group inline>
+                    <Form.Field width={fieldLabelWidth}>
+                        <label>监控文件修改</label>
+                    </Form.Field>   
+                    <Form.Field>
+                        <Checkbox 
+                            onChange={this.bindInputChangeHandler('watchFileChange')} 
+                            checked={this.props.config.get('watchFileChange')} 
+                            toggle 
+                        />
+                    </Form.Field>                         
+                </Form.Group>                     
                 {/* 运行端口号 */}
                 <Form.Group inline>
                     <Form.Field width={fieldLabelWidth}>
@@ -166,6 +213,7 @@ export default class ConfigView extends React.Component {
                     </Form.Field>
                 </Form.Group>
                 <Form.Group inline>
+                    {waitingButton}
                     {saveChangeButton}
                     {rollbackChangeButton}                    
                     {lunchRenderServerButton}

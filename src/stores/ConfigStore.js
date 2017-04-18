@@ -19,8 +19,10 @@ class ConfigStore {
         Dispatcher.register((payload) => {
             switch (payload.type) {
                 case ActionTypes.UPDATE_ALL_RS_CONFIG:
-                    ConfigRemote.getConfig().then((cfgObj) => {        
+                    ConfigRemote.getConfig().then((cfgObj) => {
+                        console.log(cfgObj);
                         this._config = Map(cfgObj);
+                        this._configBackup = Map(cfgObj);
                         this._ui = this._ui.set('loading', false);
                         myEmitter.emit('CONFIG_STORE_CHANGED');                        
                     }, (errMessage) => {
@@ -42,9 +44,33 @@ class ConfigStore {
                 case ActionTypes.RESTORE_RS_CONFIG:
                     this._ui = this._ui.set('dataIsDirty', false);                    
                     this._config = this._configBackup;
-
+                    console.log('ConfigStore.js: RESTORE_RS_CONFIG--->', this._config.toJS());
                     myEmitter.emit('CONFIG_STORE_CHANGED');              
                 break;
+                case ActionTypes.LUNCH_RS:
+                    this._config = this._config.set('lunchState', '');                        
+                    this._config = this._config.set('lunchInfo', '');                        
+                    ConfigRemote.lunchRenderServer();
+                    myEmitter.emit('CONFIG_STORE_CHANGED');
+                    break;
+                case ActionTypes.UPDATE_RENDER_STATE:
+                    let errorMessage = payload.errorMessage;
+                    let lunchState = payload.lunchState;
+                    let info = payload.info;
+                    
+                    console.log(errorMessage, lunchState, info);
+
+                    this._config = this._config.set('lunchState', errorMessage || lunchState);
+                    this._config = this._config.set('lunchInfo', info);
+
+                    myEmitter.emit('CONFIG_STORE_CHANGED');
+                    break;
+                case ActionTypes.STOP_RS:
+                    ConfigRemote.stopRenderServer();
+                    break;
+                case ActionTypes.RESTART_RS:
+                    ConfigRemote.restartRenderServer();                
+                    break;
                 case ActionTypes.SAVE_RS_CONFIG:
                     this._ui = this._ui.set('dataIsDirty', false);
                     this._ui = this._ui.set('loading', true);

@@ -1,6 +1,9 @@
 var fs = require('fs');
 
 module.exports = {
+    isFunctionType: function (val) {
+        return Object.prototype.toString.call(val) == '[object Function]' ? true : false;
+    },
     isDirectory: function (pathString) {
         var states = fs.lstatSync(pathString);
         return states.isDirectory();

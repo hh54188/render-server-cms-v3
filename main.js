@@ -12,6 +12,83 @@ const renderSupervisor = require('./client/renderSupervisor.js');
 
 const fs = require('fs');
 
+let manualLunch = false;
+
+ipc.on('get-render-state', (event) => {
+
+    if (manualLunch) {
+        return;
+    }
+    
+    renderSupervisor.isRunning((error, result) => {
+        if (result) {
+            event.sender.send('render-lunched', null, 'RUNNING');
+            return;
+        }
+
+        event.sender.send('render-lunched', null, 'OFFLINE');
+    });
+});
+
+ipc.on('kill-render', (event) => {
+    renderSupervisor.kill();
+}); 
+
+ipc.on('lunch-render', (event) => {
+
+    manualLunch = true;
+    
+    renderSupervisor.kill();
+    renderSupervisor.lunch();
+
+    let maxTimeout = 5;
+    let timeoutCount = maxTimeout;
+    let timer = setInterval(() => {
+        timeoutCount--;
+        console.log('main.js: lunch timeCount--->', timeoutCount);
+        renderSupervisor.isRunning((error, result) => {
+            if (error) {
+                console.log('main.js: lunch failed!', 'FAILED', null, error);
+
+                renderSupervisor.kill();
+                clearInterval(timer);
+
+                event.sender.send('render-lunched', 'FAILED', null, error);                
+                manualLunch = false;
+
+                return;
+            }
+
+            // 如果端口已经被占用，表示运行成功
+            if (result) {
+                console.log('main.js: lunch success!', 'Cost', maxTimeout - timeoutCount, 'seconds');
+                clearInterval(timer);
+                
+                event.sender.send('render-lunched', null, 'RUNNING');
+                manualLunch = false;
+
+                return;                  
+            }
+
+            // 如果已经超时并且端口号仍未被占用
+            // 表示启动失败
+            if (!timeoutCount && !result) {
+                console.log('main.js: lunch failed! Timeout!');
+                
+                renderSupervisor.kill();                
+                clearInterval(timer);
+                
+                event.sender.send('render-lunched', 'TIMEOUT');
+                manualLunch = false;
+
+                return;
+            }
+
+            event.sender.send('render-lunched', null, 'WAITING', timeoutCount);
+        });
+    }, 1000);
+})
+
 ipc.on('open-directory-dialog', (event) => {
     dialog.showOpenDialog({
         properties: ['openDirectory']
@@ -20,30 +97,29 @@ ipc.on('open-directory-dialog', (event) => {
             let directoryPath = directoryPathArr[0];
             let errorMessage = pathIsNotAvailable(directoryPath);
 
-            let fileContent = fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8');
-            let configObj = JSON.parse(fileContent);
+            if (!errorMessage) {
+                let fileContent = fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8');
+                let configObj = JSON.parse(fileContent);
 
-            configObj.path = directoryPath;
-            fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(configObj), 'utf-8');
-
-            if (errorMessage) {
-                event.sender.send('selected-directory-failed', errorMessage);
-            } else {
-                event.sender.send('selected-directory-successed', directoryPath);
+                configObj.path = directoryPath;
+                fs.writeFileSync(path.join(__dirname, 'config.json'), JSON.stringify(configObj), 'utf-8');
             }
+
+            event.sender.send('directory-selected', errorMessage, directoryPath);
         }
     })
 })
 
 ipc.on('read-config-file', (event) => {
-    const readFileFailed = (errorMessage) => { event.sender.send('read-config-failed', errorMessage); }
-    const readFileSuccessed = (cfgObj) => { event.sender.send('read-config-successed', cfgObj); }
+    const readFileCallback = (errorMessage, cfgObj) => {
+        console.log('main.js: readFileCallback--->', cfgObj);
+        event.sender.send('config-readed', errorMessage, cfgObj);}
     let fileContent = '';
     
     try {
         fileContent = fs.readFileSync(path.join(__dirname, 'config.json'), 'utf-8');
     } catch(e) {
-        readFileFailed("Config file doesn't exist");
+        readFileCallback("Config file doesn't exist");
         return;
     }
 
@@ -51,25 +127,27 @@ ipc.on('read-config-file', (event) => {
     try {
         fileContent = JSON.parse(fileContent);
     } catch(e) {
-        readFileFailed("Config file content can't be parsed to JSON");
+        readFileCallback("Config file content can't be parsed to JSON");
         return;
     }
 
     // 配置文件中rs路径不存在
     if (!fileContent.path) {
-        readFileFailed("Config 'path' value doesn't exist");
+        readFileCallback("Config 'path' value doesn't exist");
         return;
     }
 
     let errorMessage = ''
     if (errorMessage = pathIsNotAvailable(fileContent.path)) {
-        readFileFailed(errorMessage);
+        readFileCallback(errorMessage);
         return;        
     }
-
+    console.log('main.js: config.json--->', fileContent);
     renderSupervisor.setRsPath(fileContent.path, fileContent.production);
     renderSupervisor.getConfig((cfgObj) => {
-        readFileSuccessed(cfgObj);
+        cfgObj.watchFileChange = fileContent.watch === "false" ? false : true;
+        console.log('main.js: config object--->', cfgObj);
+        readFileCallback(null, cfgObj);
     })
 });
 

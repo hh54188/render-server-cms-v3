@@ -11,7 +11,7 @@ let _production = false;
 
 
 function setRenderServerPath(path_str, production) {
-    console.log(path_str, production);
+    console.log('renderSupervisor: setRenderServerPath--->', path_str, production);
     _pathStr = path_str;
     _production = production == undefined ? false : !!production;
     rsPath.setRenderServerPath(path_str, production);
@@ -36,6 +36,18 @@ function portInUse(port, callback) {
 };
 
 function getRunningState(portNumber, callback) {
+
+    if (util.isFunctionType(portNumber)) {
+        callback = portNumber;
+
+        let renderSrcPath = rsPath.getSrcPath();
+        oojs.setPath(renderSrcPath);
+        var configObj = oojs.using('rs.common.config.global');
+        configObj = oojs.reload('rs.common.config.global');
+        portNumber = configObj.server.port;
+    }
+
+
     if (portNumber && util.validatePortNumber(portNumber)){
         portInUse(portNumber, function (returnValue) {
             callback(null, returnValue);
@@ -59,9 +71,14 @@ function lunch() {
     _rsProcess = child_process.fork(
         path.join(renderServerRootPath, 'master.js'),
         {
-            cwd: renderServerRootPath
+            cwd: renderServerRootPath,
+            silent: true
         }
     );
+
+    _rsProcess.stdout.on('data', function(data) {
+        console.log('stdout--->', data.toString()); 
+    });
 }
 
 function kill() {
@@ -70,14 +87,22 @@ function kill() {
     }
 }
 
+function convertToBoolean(value) {
+    if (value === 'true') {
+        return true;
+    }
+    return false;
+}
+
 function getConfig(callback) {
     let renderSrcPath = rsPath.getSrcPath();
+    console.log('renderSupervisor.js renderSrcPath--->', renderSrcPath);
 	oojs.setPath(renderSrcPath);
 	var configObj = oojs.using('rs.common.config.global');
 	configObj = oojs.reload('rs.common.config.global');
 
     let absolutePath = _pathStr;
-    let enableProductionDir = _production;
+    let enableProductionDir = convertToBoolean(_production);
     let port = configObj.server.port;
     let dbName = configObj.db.database;
     let dbAccount = configObj.db.readUsername;
@@ -85,9 +110,11 @@ function getConfig(callback) {
     let dbPort = configObj.db.port;
 
     getRunningState(port, (error, boolResult) => {
-        let isRunning = boolResult;
+        let lunchState = boolResult == false ? 'OFFLINE': 'SUCCESS';
+        let lunchInfo = '';
         callback({
-            isRunning,
+            lunchState,
+            lunchInfo,
             absolutePath,
             enableProductionDir,
             port,
@@ -101,6 +128,7 @@ function getConfig(callback) {
 
 module.exports = {
     setRsPath: setRenderServerPath,
+    isRunning: getRunningState,
     getConfig: getConfig,
     lunch: lunch,
     kill: kill

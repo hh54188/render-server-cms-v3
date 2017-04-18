@@ -26,14 +26,16 @@ class App extends React.Component {
         super(props);
         this.state = {
             configDataModel: Map({
-                isRunning: false,
+                lunchState: 'OFFLINE',
+                lunchInfo: '',
+                watch: true,
                 absolutePath: 'sample',
                 enableProductionDir: true,
                 port: 'sample',
                 dbName: 'sample',
                 dbAccount: 'sample',
                 dbPassword: 'sample',
-                dbPort: 'sample'    
+                dbPort: 'sample'
             }),
             configUIModel: ConfigStore.getUIState(),
             appUIModel: ConfigStore.getUIState()

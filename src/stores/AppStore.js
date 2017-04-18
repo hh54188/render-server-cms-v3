@@ -20,8 +20,8 @@ class AppStore {
         Dispatcher.register((payload) => {
             switch(payload.type) {
                 case ActionTypes.OPEN_DIRECTORY_DIALOG:
-                    AppRemote.openFileDialog().then((directoryPathsArr) => {
-                        console.log('AppStore: directory--->', directoryPathsArr[0]);
+                    AppRemote.openFileDialog().then((directoryPath) => {
+                        console.log('AppStore: directory--->', directoryPath);
                         AppActions.closeDirectoryDialog();
                         ConfigActions.updateAllConfig();
                     }, (errorMessage) => {
@@ -35,6 +35,7 @@ class AppStore {
                     break;
                 case ActionTypes.CLOSE_DIRECTORY_DIALOG:
                     this._ui = this._ui.set('showSelectDirectoryModal', false);
+                    this._ui = this._ui.set('rsDirectoryIsWrong', false);
                     myEmitter.emit('APP_STORE_CHANGED');                    
                     break;                    
                 case ActionTypes.SELECT_RS_DIRECTORY:

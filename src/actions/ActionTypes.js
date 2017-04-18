@@ -30,8 +30,9 @@ const ActionTypes = {
     // 重新启动 Render Server
     RESTART_RS: 'RESTART_RS',
     // 终止 Render Server 运行
-    STOP_RS: 'STOP_RS'
-    
+    STOP_RS: 'STOP_RS',
+    // Render的运行状态发生了变化
+    UPDATE_RENDER_STATE: 'UPDATE_RENDER_STATE'
 };
 
 export default ActionTypes;

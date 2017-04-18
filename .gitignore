@@ -1,4 +1,6 @@
 src/build
+src/scripts/bundle.js
+
 electron
 bower_components
 

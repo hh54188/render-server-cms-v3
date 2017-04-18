@@ -27,11 +27,11 @@ function getRenderServerPath() {
 
 function getRootPath(isProduction) {
     isProduction = isProduction == undefined ? _isProduction : isProduction;
-    return path.join(RENDER_SERVER_PATH, (isProduction? 'production': ''))
+    return path.join(RENDER_SERVER_PATH, (isProduction == true ? 'production': ''))
 }
 
 function getSrcPath(isProduction) {
-    isProduction = isProduction == undefined ? _isProduction : isProduction;    
+    isProduction = isProduction == undefined ? _isProduction : isProduction;
 	return path.resolve(path.join(getRootPath(isProduction), 'src'));
 }
 

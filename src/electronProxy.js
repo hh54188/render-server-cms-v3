@@ -1,3 +1,5 @@
+import myEmitter from 'src/myEmitter.js';
+
 class ElectronProxy {
     constructor() {
         this.electronProxy = window.electronProxy;
@@ -7,41 +9,36 @@ class ElectronProxy {
         this.readConfigFileCallbackQueue = [];
         this.openDirectoryDialogCallbackQueue = [];
 
-        this.ipc.on('selected-directory-successed', (event, directory) => {
+        setInterval(() => {
+            this.ipc.send('get-render-state');
+        }, 1000 * 1);
+
+        this.ipc.on('render-lunched', (event, errorMessage, lunchState, info) => {
+            myEmitter.emit('RENDER_STATE_CHANGED', errorMessage, lunchState, info);
+        })
+
+        this.ipc.on('directory-selected', (event, errorMessage, directory) => {
             let queueName = 'openDirectoryDialogCallbackQueue';
             while (this[queueName].length) {
                 let callback = this.popCallbackQueue(queueName);
-                console.log('electronProxy: selected-directory-successed--->', directory);
-                callback(null, directory);
-            }            
+                callback(errorMessage, directory);
+            }
         });
 
-        this.ipc.on('selected-directory-failed', (event, errorMessage) => {
-            let queueName = 'openDirectoryDialogCallbackQueue';
-            while (this[queueName].length) {
-                let callback = this.popCallbackQueue(queueName);
-                console.log('electronProxy: selected-directory-failed--->', errorMessage);
-                callback(errorMessage);
-            }            
-        });        
-
-        this.ipc.on('read-config-failed', (event, errorMessage) => {
+        this.ipc.on('config-readed', (event, errorMessage, cfgObj) => {
+            console.log('electronProxy.js:config-readed--->', cfgObj);
             let queueName = 'readConfigFileCallbackQueue';
             while (this[queueName].length) {
                 let callback = this.popCallbackQueue(queueName);
-                console.log('electronProxy: read-config-failed--->', errorMessage);
-                callback(errorMessage);
+                callback(errorMessage, cfgObj);
             }
-        });        
-
-        this.ipc.on('read-config-successed', (event, cfgObj) => {
-            let queueName = 'readConfigFileCallbackQueue';
-            while (this[queueName].length) {
-                let callback = this.popCallbackQueue(queueName);
-                console.log('electronProxy: read-config-successed--->', cfgObj);
-                callback(null, cfgObj);
-            }            
         });                
+    }
+    kill() {
+        this.ipc.send('kill-render');
+    }
+    lunch(callback) {
+        this.ipc.send('lunch-render');
     }
     popCallbackQueue(queueName) {
         return this[queueName].pop();

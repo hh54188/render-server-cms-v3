@@ -2,6 +2,14 @@ import Dispatcher from 'src/dispatcher.js';
 import ActionTypes from 'actions/ActionTypes.js';
 
 const Actions = {
+    updateRenderState(errorMessage, lunchState, info) {
+        Dispatcher.dispatch({
+            type: ActionTypes.UPDATE_RENDER_STATE,
+            errorMessage,
+            lunchState,
+            info
+        });        
+    },
     updateAllConfig() {
         Dispatcher.dispatch({
             type: ActionTypes.UPDATE_ALL_RS_CONFIG
