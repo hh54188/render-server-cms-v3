@@ -57,7 +57,7 @@ function getRunningState(portNumber, callback) {
     }
 }
 
-function lunch() {
+function lunch(failCallback) {
     let renderServerRootPath = rsPath.getRootPath();
 
     if (_rsProcess) {
@@ -76,9 +76,17 @@ function lunch() {
         }
     );
 
-    _rsProcess.stdout.on('data', function(data) {
-        console.log('stdout--->', data.toString()); 
+    _rsProcess.stdout.on('data', (data) => {
+        console.log('stdout--->', data.toString());
     });
+
+    _rsProcess.stderr.on('data', (data) => {
+        console.log('stderr--->', data.toString());       
+        this.kill();
+        if (failCallback) {
+            failCallback(data.toString());
+        }
+    })
 }
 
 function kill() {
@@ -103,11 +111,11 @@ function getConfig(callback) {
 
     let absolutePath = _pathStr;
     let enableProductionDir = convertToBoolean(_production);
-    let port = configObj.server.port;
-    let dbName = configObj.db.database;
-    let dbAccount = configObj.db.readUsername;
-    let dbPassword = configObj.db.readPassword;
-    let dbPort = configObj.db.port;
+    let port = configObj.server.port.toString();
+    let dbName = configObj.db.database.toString();
+    let dbAccount = configObj.db.readUsername.toString();
+    let dbPassword = configObj.db.readPassword.toString();
+    let dbPort = configObj.db.port.toString();
 
     getRunningState(port, (error, boolResult) => {
         let lunchState = boolResult == false ? 'OFFLINE': 'SUCCESS';

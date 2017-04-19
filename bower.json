@@ -2,6 +2,7 @@
   "name": "render-server-cms",
   "version": "0.0.1",
   "dependencies": {
-    "semantic": "semantic-ui#^2.2.10"
+    "semantic": "semantic-ui#^2.2.10",
+    "clipboard": "^1.6.1"
   }
 }

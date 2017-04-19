@@ -14,19 +14,22 @@ const fs = require('fs');
 
 let manualLunch = false;
 
+// ipcMain 不能主动触发事件，只能被动的响应来自ipcRender的请求
 ipc.on('get-render-state', (event) => {
 
+    // 如果用户正在主动（手动）启动RS
+    // 则不响应来自client查询 RS 运行状态的请求
     if (manualLunch) {
         return;
     }
     
     renderSupervisor.isRunning((error, result) => {
         if (result) {
-            event.sender.send('render-lunched', null, 'RUNNING');
+            event.sender.send('render-lunched', 'RUNNING');
             return;
         }
 
-        event.sender.send('render-lunched', null, 'OFFLINE');
+        event.sender.send('render-lunched', 'OFFLINE');
     });
 });
 
@@ -37,23 +40,28 @@ ipc.on('kill-render', (event) => {
 ipc.on('lunch-render', (event) => {
 
     manualLunch = true;
-    
+    let timer;
     renderSupervisor.kill();
-    renderSupervisor.lunch();
+    renderSupervisor.lunch((errorInfo) => {
+        clearInterval(timer);
+        console.log('main.js: lunch failed!', 'FAILED', errorInfo);        
+        event.sender.send('render-lunched', 'FAILED', errorInfo);
+        manualLunch = false;        
+    });
 
-    let maxTimeout = 5;
+    let maxTimeout = 30;
     let timeoutCount = maxTimeout;
-    let timer = setInterval(() => {
+    timer = setInterval(() => {
         timeoutCount--;
         console.log('main.js: lunch timeCount--->', timeoutCount);
         renderSupervisor.isRunning((error, result) => {
             if (error) {
-                console.log('main.js: lunch failed!', 'FAILED', null, error);
+                console.log('main.js: lunch failed!', 'FAILED', error);
 
                 renderSupervisor.kill();
                 clearInterval(timer);
 
-                event.sender.send('render-lunched', 'FAILED', null, error);                
+                event.sender.send('render-lunched', 'FAILED', error);                
                 manualLunch = false;
 
                 return;
@@ -64,7 +72,7 @@ ipc.on('lunch-render', (event) => {
                 console.log('main.js: lunch success!', 'Cost', maxTimeout - timeoutCount, 'seconds');
                 clearInterval(timer);
                 
-                event.sender.send('render-lunched', null, 'RUNNING');
+                event.sender.send('render-lunched', 'RUNNING');
                 manualLunch = false;
 
                 return;                  
@@ -84,7 +92,7 @@ ipc.on('lunch-render', (event) => {
                 return;
             }
 
-            event.sender.send('render-lunched', null, 'WAITING', timeoutCount);
+            event.sender.send('render-lunched', 'WAITING', timeoutCount);
         });
     }, 1000);
 })

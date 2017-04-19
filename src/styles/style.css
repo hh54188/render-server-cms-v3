@@ -1,3 +1,6 @@
 span, label, p {
     font-family: "微软雅黑", "Microsoft Yahei", "Source Han Sans"!important;
 }
+.message .content{
+    white-space: pre-wrap;
+}

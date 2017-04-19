@@ -14,6 +14,12 @@ export default class ConfigView extends React.Component {
         this.saveButtonClickHandler = this.saveButtonClickHandler.bind(this);
         this.rollbackButtonClickHandler = this.rollbackButtonClickHandler.bind(this);
     }
+    // componentDidUnmount() {
+    //     new Clipboard('.btn');
+    // }
+    componentDidMount() {
+        new Clipboard('#copy-path');        
+    }
     bindInputChangeHandler(fieldName) {
         return (event, data) => {
             let value;
@@ -40,13 +46,12 @@ export default class ConfigView extends React.Component {
         ConfigActions.restartRenderService();
     }
     stopButtonClickHandler() {
-        console.log('stopButtonClickHandler');
         ConfigActions.stopRenderService();
     }
     render() {
 
         let lunchState = this.props.config.get('lunchState');
-        console.log('lunchState------>', lunchState);
+
         let renderStateMessage = lunchState === 'RUNNING'
             ?<Message
                         positive={true}
@@ -62,6 +67,19 @@ export default class ConfigView extends React.Component {
                         content='未检测到端口号被占用'
                         size='small'                        
             />
+
+        let errorMessage = this.props.UIState.get('lunchFailedInfo')
+        ? <Message
+            color='black'
+            onDismiss={() => {}}
+            icon='warning sign'
+            header='启动出错'
+            content={this.props.UIState.get('lunchFailedInfo')}
+            onClick={() => {ConfigActions.closeLunchErrorDialog();}}
+            size='small'
+        />
+        : '';
+
         let saveChangeButton = this.props.UIState.get('dataIsDirty')
             ? <Button onClick={this.saveButtonClickHandler} type={'button'} size={'small'} basic={true}><span>保存</span></Button>
             : '' ;
@@ -89,12 +107,12 @@ export default class ConfigView extends React.Component {
                 </Form.Field>
         } else if (lunchState === "OFFLINE"
                     || lunchState === "TIMEOUT"
-                    || lunchState === "ERROR") {
+                    || lunchState === "FAILED") {
             lunchRenderServerButton = 
                 <Form.Field>
                     <Button onClick={this.lunchButtonClickHandler} type={'button'} size={'small'} primary={true}><span>启动 Render Server</span></Button>
                     {
-                        (lunchState == 'TIMEOUT' || lunchState == 'ERROR')
+                        (lunchState == 'TIMEOUT' || lunchState == 'FAILED')
                             ? <Label basic color='red' pointing='left'>启动超时或者发生错误</Label>
                             : ''
                     }
@@ -114,31 +132,23 @@ export default class ConfigView extends React.Component {
                 {/* Render Server 启动状况*/}
                 {renderStateMessage}
                 {/* Render Server 目录*/}
+                {errorMessage}
                 <Form.Group inline>
                     <Form.Field width={fieldLabelWidth}>
                         <label>Render Server 路径</label>
                     </Form.Field>
                     <Form.Field>
                         <Input
-                            onChange={() => {}}
-                            action={
-                                { 
-                                    basic: true, 
-                                    labelPosition: 'right', 
-                                    type:'button', 
-                                    icon: 'copy', 
-                                    content: '复制路径' 
-                                }
-                            } 
+                            id="input-path"
+                            onChange={() => {}} 
                             value={this.props.config.get('absolutePath')} 
                         />
                     </Form.Field>
                     <Form.Field>
-                        <Button 
-                            onClick={this.selectRSButtonClickHandler} 
-                            size={'small'} 
-                            basic={true} 
-                            type={'button'}><span>重新选择目录</span></Button>
+                        <Button.Group basic size='small'>
+                            <Button type={'button'} id="copy-path" icon="copy" data-clipboard-target="#input-path input" content={'复制'} />
+                            <Button type={'button'} onClick={this.selectRSButtonClickHandler} icon="folder" content={'重选'} />
+                        </Button.Group>
                     </Form.Field>
                 </Form.Group>
                 {/* 是否启用 production 目录*/}

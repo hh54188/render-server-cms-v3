@@ -13,8 +13,9 @@ class ElectronProxy {
             this.ipc.send('get-render-state');
         }, 1000 * 1);
 
-        this.ipc.on('render-lunched', (event, errorMessage, lunchState, info) => {
-            myEmitter.emit('RENDER_STATE_CHANGED', errorMessage, lunchState, info);
+        this.ipc.on('render-lunched', (event, lunchState, info) => {
+            // console.log('electronProxy.js: render-lunched', lunchState, info);
+            myEmitter.emit('RENDER_STATE_CHANGED', lunchState, info);
         })
 
         this.ipc.on('directory-selected', (event, errorMessage, directory) => {

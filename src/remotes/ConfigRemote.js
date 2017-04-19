@@ -4,8 +4,9 @@ import ConfigActions from 'actions/ConfigActions.js';
 
 class ConfigRemote {
     constructor() {
-        myEmitter.on('RENDER_STATE_CHANGED', (errorMessage, lunchState, info) => {
-            ConfigActions.updateRenderState(errorMessage, lunchState, info);
+        myEmitter.on('RENDER_STATE_CHANGED', (lunchState, info) => {
+            // console.log('ConfigRemote.js: RENDER_STATE_CHANGED--->', lunchState, info);
+            ConfigActions.updateRenderState(lunchState, info);
         })
     }
     getConfig() {
