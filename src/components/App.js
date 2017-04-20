@@ -69,12 +69,12 @@ class App extends React.Component {
     render() {
         let tabHeaderArr = [
             {
-                active: true,
+                active: false,
                 name: 'config',
                 text: 'Render配置'
             },
             {
-                active: false,
+                active: true,
                 name: 'template',
                 text: '模板'                
             },

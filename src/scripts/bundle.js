@@ -34378,7 +34378,7 @@ var TemplateView = function (_React$Component) {
         key: 'render',
         value: function render() {
             var fieldLabelWidth = 5;
-            var fieldActionWidth = 10;
+            var fieldActionWidth = 11;
             var styleOptions = [{
                 key: '10001',
                 value: '10001',
@@ -34406,7 +34406,7 @@ var TemplateView = function (_React$Component) {
                     ),
                     _react2.default.createElement(
                         _semanticUiReact.Accordion.Content,
-                        null,
+                        { active: true },
                         _react2.default.createElement(
                             _semanticUiReact.Segment,
                             null,
@@ -34428,8 +34428,8 @@ var TemplateView = function (_React$Component) {
                                     _react2.default.createElement(
                                         _semanticUiReact.Form.Field,
                                         { width: fieldActionWidth },
-                                        _react2.default.createElement(_semanticUiReact.Checkbox, { checked: true, label: '\u50CF\u7D20' }),
-                                        _react2.default.createElement(_semanticUiReact.Checkbox, { checked: true, label: '\u6BD4\u4F8B' })
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u50CF\u7D20' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u6BD4\u4F8B' })
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34447,8 +34447,8 @@ var TemplateView = function (_React$Component) {
                                     _react2.default.createElement(
                                         _semanticUiReact.Form.Field,
                                         { width: fieldActionWidth },
-                                        _react2.default.createElement(_semanticUiReact.Checkbox, { checked: true, label: '\u56FA\u5B9A' }),
-                                        _react2.default.createElement(_semanticUiReact.Checkbox, { checked: true, label: '\u8303\u56F4' })
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u56FA\u5B9A' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u8303\u56F4' })
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34466,9 +34466,27 @@ var TemplateView = function (_React$Component) {
                                     _react2.default.createElement(
                                         _semanticUiReact.Form.Field,
                                         { width: fieldActionWidth },
-                                        _react2.default.createElement(_semanticUiReact.Checkbox, { checked: true, label: 'otpl' }),
-                                        _react2.default.createElement(_semanticUiReact.Checkbox, { checked: true, label: 'layout' })
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'otpl' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'layout' })
                                     )
+                                ),
+                                _react2.default.createElement(
+                                    _semanticUiReact.Form.Group,
+                                    { inline: true },
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Form.Field,
+                                        { width: fieldLabelWidth },
+                                        _react2.default.createElement(
+                                            'label',
+                                            null,
+                                            '\u521B\u610F\u7C7B\u578B\uFF08creative\uFF09'
+                                        )
+                                    ),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Text' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Image' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Flash' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'TextWidthIcon' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Video' })
                                 ),
                                 _react2.default.createElement(
                                     _semanticUiReact.Form.Group,
@@ -34523,8 +34541,26 @@ var TemplateView = function (_React$Component) {
                             _react2.default.createElement(
                                 _semanticUiReact.Table.Cell,
                                 { collapsing: true },
-                                _react2.default.createElement(_semanticUiReact.Button, { icon: "content", basic: true, size: 'small', content: '\u8BE6\u60C5' }),
-                                _react2.default.createElement(_semanticUiReact.Button, { icon: "copy", basic: true, size: 'small', content: '\u590D\u5236\u8DEF\u5F84' })
+                                _react2.default.createElement(_semanticUiReact.Button, { icon: "configure", basic: true, size: 'small', content: '\u6D4B\u8BD5\u6A21\u677F' }),
+                                _react2.default.createElement(
+                                    _semanticUiReact.Popup,
+                                    { trigger: _react2.default.createElement(_semanticUiReact.Button, { icon: "content", basic: true, size: 'small', content: '\u6A21\u677F\u63CF\u8FF0' }) },
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Popup.Content,
+                                        null,
+                                        'Hello World'
+                                    )
+                                ),
+                                _react2.default.createElement(_semanticUiReact.Button, { icon: "copy", basic: true, size: 'small', content: '\u590D\u5236\u540D\u79F0' }),
+                                _react2.default.createElement(
+                                    _semanticUiReact.Popup,
+                                    { trigger: _react2.default.createElement(_semanticUiReact.Button, { icon: "warning sign", color: 'red', size: 'small', content: '\u5B58\u5728\u9519\u8BEF' }) },
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Popup.Content,
+                                        null,
+                                        'Hello World'
+                                    )
+                                )
                             )
                         )
                     ),
@@ -66844,11 +66880,11 @@ var App = function (_React$Component) {
         key: 'render',
         value: function render() {
             var tabHeaderArr = [{
-                active: true,
+                active: false,
                 name: 'config',
                 text: 'Render配置'
             }, {
-                active: false,
+                active: true,
                 name: 'template',
                 text: '模板'
             }, {

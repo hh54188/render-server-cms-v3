@@ -5,7 +5,8 @@ import {
     Button, Checkbox, 
     Message, Label, 
     Accordion, Segment, 
-    Menu, Dropdown
+    Menu, Dropdown,
+    Popup
 } from 'semantic-ui-react'
 
 import TabContainer from 'components/Tab/TabContainer.js';
@@ -15,7 +16,7 @@ import TabContentView from 'components/Tab/TabContent.js';
 export default class TemplateView extends React.Component {
     render() {
         let fieldLabelWidth = 5;
-        let fieldActionWidth = 10;
+        let fieldActionWidth = 11;
         let styleOptions = [
             {
                 key: '10001',
@@ -35,7 +36,7 @@ export default class TemplateView extends React.Component {
                         <Icon name='dropdown' />
                         <label>过滤模板</label>
                     </Accordion.Title>
-                    <Accordion.Content>
+                    <Accordion.Content active>
                         <Segment>
                             <Form>
                                 <Form.Group inline>
@@ -43,8 +44,8 @@ export default class TemplateView extends React.Component {
                                         <label>尺寸类型（sizeType）</label>
                                     </Form.Field>
                                     <Form.Field width={fieldActionWidth}>
-                                        <Checkbox checked={true} label='像素' />
-                                        <Checkbox checked={true} label='比例' />
+                                        <Form.Checkbox checked={true} label='像素' />
+                                        <Form.Checkbox checked={true} label='比例' />
                                     </Form.Field>
                                 </Form.Group>
 
@@ -53,8 +54,8 @@ export default class TemplateView extends React.Component {
                                         <label>尺寸值类型（valueType）</label>
                                     </Form.Field>
                                     <Form.Field width={fieldActionWidth}>
-                                        <Checkbox checked={true} label='固定' />
-                                        <Checkbox checked={true} label='范围' />
+                                        <Form.Checkbox checked={true} label='固定' />
+                                        <Form.Checkbox checked={true} label='范围' />
                                     </Form.Field>
                                 </Form.Group>
 
@@ -63,10 +64,21 @@ export default class TemplateView extends React.Component {
                                         <label>模板引擎（renderEngine）</label>
                                     </Form.Field>
                                     <Form.Field width={fieldActionWidth}>
-                                        <Checkbox checked={true} label='otpl' />
-                                        <Checkbox checked={true} label='layout' />
+                                        <Form.Checkbox checked={true} label='otpl' />
+                                        <Form.Checkbox checked={true} label='layout' />
                                     </Form.Field>
                                 </Form.Group>
+
+                                <Form.Group inline>
+                                    <Form.Field  width={fieldLabelWidth}>
+                                        <label>创意类型（creative）</label>
+                                    </Form.Field>
+                                    <Form.Checkbox checked={true} label='Text' />
+                                    <Form.Checkbox checked={true} label='Image' />
+                                    <Form.Checkbox checked={true} label='Flash' />
+                                    <Form.Checkbox checked={true} label='TextWidthIcon' />
+                                    <Form.Checkbox checked={true} label='Video' />
+                                </Form.Group>                                
 
                                 <Form.Group inline>
                                     <Form.Field  width={fieldLabelWidth}>
@@ -96,8 +108,18 @@ export default class TemplateView extends React.Component {
                                 <Icon name='folder' /> node_modules
                             </Table.Cell>
                             <Table.Cell collapsing>
-                                <Button icon={"content"} basic={true} size={'small'} content="详情" />
-                                <Button icon={"copy"} basic={true} size={'small'} content="复制路径" />
+                                <Button icon={"configure"} basic={true} size={'small'} content="测试模板" />                                
+                                <Popup trigger={<Button icon={"content"} basic={true} size={'small'} content="模板描述" />}>
+                                    <Popup.Content>
+                                        Hello World
+                                    </Popup.Content>
+                                </Popup>
+                                <Button icon={"copy"} basic={true} size={'small'} content="复制名称" />
+                                <Popup trigger={<Button icon={"warning sign"} color={'red'} size={'small'} content="存在错误" />}>
+                                    <Popup.Content>
+                                        Hello World
+                                    </Popup.Content>
+                                </Popup>
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
