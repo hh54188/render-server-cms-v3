@@ -46,7 +46,6 @@ export default class ConfigView extends React.Component {
         ConfigActions.stopRenderService();
     }
     render() {
-
         let lunchState = this.props.config.get('lunchState');
 
         let renderStateMessage = lunchState === 'RUNNING'

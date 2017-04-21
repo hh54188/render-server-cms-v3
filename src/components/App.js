@@ -44,13 +44,31 @@ class App extends React.Component {
             configUIModel: ConfigStore.getUIState(),
             // Template
             templateDataModel: Map({
-                templates: []
+                styles: [],
+                templates: [],
+                styleIds: [],
+                filters: {
+                    template: {
+                        sizeType: [1, 2],
+                        valueType: [1, 2],
+                        renderEngine: ['otpl', 'layout'],
+                        creativeType: [0, 1, 2, 4, 7, -1]
+                    },
+                    style: {
+                        flowType: [1, 2],
+                        layout: [1, 2, 4, -1],
+                        attachType: [0, 16, 1024, -1],
+                        specifiedStyleIds: []
+                    },
+                    pagination: {
+                        countPerPage: 10,
+                        total: 0,
+                        cur: 0
+                    }
+                }
             }),
             templateUIModel: Map({
-                pagination: {
-                    total: 0,
-                    cur: 0
-                }
+ 
             })
         };
 
@@ -120,7 +138,7 @@ class App extends React.Component {
                                 
                                 <TabContentView name={'template'}>
                                     <TemplateView 
-                                        templates={this.state.templateDataModel}
+                                        data={this.state.templateDataModel}
                                         UIState={this.state.templateUIModel} 
                                     />
                                 </TabContentView>

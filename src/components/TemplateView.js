@@ -20,7 +20,8 @@ export default class TemplateView extends React.Component {
         let styleOptions = [];
 
         let rows = [];
-        this.props.templates.forEach((tpl, index) => {
+
+        this.props.data.get('templates').forEach((tpl, index) => {
             rows.push(
                 <Table.Row key={index}>
                     <Table.Cell >
@@ -49,6 +50,9 @@ export default class TemplateView extends React.Component {
                 </Table.Row>
             );
         });
+
+        let filtersOfTemplate = this.props.data.get('filters').template;
+        let filtersOfStyle = this.props.data.get('filters').style;
 
         return (
             <div>
@@ -127,7 +131,7 @@ export default class TemplateView extends React.Component {
 
                                 <Form.Group inline>
                                     <Form.Field  width={fieldLabelWidth}>
-                                        <label>动作类型 (AttachType)</label>
+                                        <label>动作类型 (attachType)</label>
                                     </Form.Field>
                                     <Form.Field width={fieldActionWidth}>
                                         <Form.Checkbox checked={true} name="attachType" value="0" label='跳转' />

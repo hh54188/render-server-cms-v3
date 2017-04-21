@@ -33850,7 +33850,6 @@ var ConfigView = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-
             var lunchState = this.props.config.get('lunchState');
 
             var renderStateMessage = lunchState === 'RUNNING' ? _react2.default.createElement(_semanticUiReact.Message, {
@@ -34394,7 +34393,8 @@ var TemplateView = function (_React$Component) {
             var styleOptions = [];
 
             var rows = [];
-            this.props.templates.forEach(function (tpl, index) {
+
+            this.props.data.get('templates').forEach(function (tpl, index) {
                 rows.push(_react2.default.createElement(
                     _semanticUiReact.Table.Row,
                     { key: index },
@@ -34429,6 +34429,9 @@ var TemplateView = function (_React$Component) {
                     )
                 ));
             });
+
+            var filtersOfTemplate = this.props.data.get('filters').template;
+            var filtersOfStyle = this.props.data.get('filters').style;
 
             return _react2.default.createElement(
                 'div',
@@ -34598,7 +34601,7 @@ var TemplateView = function (_React$Component) {
                                         _react2.default.createElement(
                                             'label',
                                             null,
-                                            '\u52A8\u4F5C\u7C7B\u578B (AttachType)'
+                                            '\u52A8\u4F5C\u7C7B\u578B (attachType)'
                                         )
                                     ),
                                     _react2.default.createElement(
@@ -66940,14 +66943,30 @@ var App = function (_React$Component) {
             configUIModel: _ConfigStore2.default.getUIState(),
             // Template
             templateDataModel: (0, _immutable.Map)({
-                templates: []
-            }),
-            templateUIModel: (0, _immutable.Map)({
-                pagination: {
-                    total: 0,
-                    cur: 0
+                styles: [],
+                templates: [],
+                styleIds: [],
+                filters: {
+                    template: {
+                        sizeType: [1, 2],
+                        valueType: [1, 2],
+                        renderEngine: ['otpl', 'layout'],
+                        creativeType: [0, 1, 2, 4, 7, -1]
+                    },
+                    style: {
+                        flowType: [1, 2],
+                        layout: [1, 2, 4, -1],
+                        attachType: [0, 16, 1024, -1],
+                        specifiedStyleIds: []
+                    },
+                    pagination: {
+                        countPerPage: 10,
+                        total: 0,
+                        cur: 0
+                    }
                 }
-            })
+            }),
+            templateUIModel: (0, _immutable.Map)({})
         };
 
         _myEmitter2.default.on('CONFIG_STORE_CHANGED', function () {
@@ -67023,7 +67042,7 @@ var App = function (_React$Component) {
                                     _TabContent2.default,
                                     { name: 'template' },
                                     _react2.default.createElement(_TemplateView2.default, {
-                                        templates: this.state.templateDataModel,
+                                        data: this.state.templateDataModel,
                                         UIState: this.state.templateUIModel
                                     })
                                 ),
@@ -67084,28 +67103,39 @@ var TemplateStore = function () {
     function TemplateStore() {
         _classCallCheck(this, TemplateStore);
 
-        var _modal = (0, _immutable.Map)({
+        var _model = (0, _immutable.Map)({
             styles: [],
             templates: [],
             styleIds: [],
-            filters: {}
-        });
-
-        var _ui = (0, _immutable.Map)({
-            pagination: {
-                total: 0,
-                cur: 0
+            filters: {
+                template: {
+                    sizeType: [1, 2],
+                    valueType: [1, 2],
+                    renderEngine: ['otpl', 'layout'],
+                    creativeType: [0, 1, 2, 4, 7, -1]
+                },
+                style: {
+                    flowType: [1, 2],
+                    layout: [1, 2, 4, -1],
+                    attachType: [0, 16, 1024, -1],
+                    specifiedStyleIds: []
+                },
+                pagination: {
+                    countPerPage: 10,
+                    total: 0,
+                    cur: 0
+                }
             }
         });
+
+        var _ui = (0, _immutable.Map)({});
 
         _dispatcher2.default.register(function (payload) {
             switch (payload.type) {
                 case _ActionTypes2.default.GET_TEMPLATES:
                     _TemplateRemote2.default.getTemplates().then(function (styles) {
-                        debugger;
-                    }, function (error) {
-                        debugger;
-                    });
+                        console.log(styles);
+                    }, function (error) {});
                     break;
             }
         });
@@ -67114,6 +67144,9 @@ var TemplateStore = function () {
     }
 
     _createClass(TemplateStore, [{
+        key: 'updateTemplates',
+        value: function updateTemplates() {}
+    }, {
         key: 'getTemplates',
         value: function getTemplates() {}
     }]);
