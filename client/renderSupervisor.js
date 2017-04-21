@@ -4,6 +4,7 @@ const path = require('path');
 const child_process = require('child_process');
 require('node-oojs');
 const rsPath = require('./rsPath.js');
+const fs = require('fs');
 
 let _rsProcess = null;
 let _pathStr = '';
@@ -19,7 +20,7 @@ function setRenderServerPath(path_str, production) {
 
 // http://stackoverflow.com/questions/29860354/in-nodejs-how-do-i-check-if-a-port-is-listening-or-in-use
 function portInUse(port, callback) {
-    var server = net.createServer(function(socket) {
+    let server = net.createServer(function(socket) {
         socket.write('Echo server\r\n');
         socket.pipe(socket);
     });
@@ -134,10 +135,35 @@ function getConfig(callback) {
     });
 }
 
+function collectTemplates() {
+    let allStyles = [];
+    let allTemplates = [];
+
+    let styleFileNames = fs.readdirSync(rsPath.getStyleFolderPath());
+    allStyles = styleFileNames.map((fileName) => {
+        let fileContent = fs.readFileSync(rsPath.getStyleFile(fileName), 'utf-8');
+        let styleObj = JSON.parse(fileContent);
+        let templates = styleObj.template.map((templateId) => {
+            templateId = templateId.toString();
+            let templateDescContent = fs.readFileSync(rsPath.getTemplateJsonFilePath(templateId), 'utf-8');
+            let templateDescObj = JSON.parse(templateDescContent);
+            return templateDescObj;
+        });
+        allTemplates = allTemplates.concat(templates);
+        styleObj.templates = templates;
+        return styleObj;
+    });
+
+    return allStyles;
+    // console.log(allStyles);
+    // console.log(allTemplates);
+}
+
 module.exports = {
     setRsPath: setRenderServerPath,
     isRunning: getRunningState,
     getConfig: getConfig,
     lunch: lunch,
-    kill: kill
+    kill: kill,
+    collectTemplates: collectTemplates
 }

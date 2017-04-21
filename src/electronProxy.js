@@ -8,38 +8,46 @@ class ElectronProxy {
 
         this.readConfigFileCallbackQueue = [];
         this.openDirectoryDialogCallbackQueue = [];
+        this.getTemplatesCallbackQueue = [];
 
         setInterval(() => {
             this.ipc.send('get-render-state');
         }, 1000 * 1);
 
         this.ipc.on('render-lunched', (event, lunchState, info) => {
-            // console.log('electronProxy.js: render-lunched', lunchState, info);
             myEmitter.emit('RENDER_STATE_CHANGED', lunchState, info);
-        })
+        });
+
+        this.ipc.on('templates-received', (event, error, styles) => {
+            let queueName = 'getTemplatesCallbackQueue';
+            this.invokeCallback(queueName, error, styles);
+        });
 
         this.ipc.on('directory-selected', (event, errorMessage, directory) => {
             let queueName = 'openDirectoryDialogCallbackQueue';
-            while (this[queueName].length) {
-                let callback = this.popCallbackQueue(queueName);
-                callback(errorMessage, directory);
-            }
+            this.invokeCallback(queueName, errorMessage, directory);
         });
 
         this.ipc.on('config-readed', (event, errorMessage, cfgObj) => {
-            console.log('electronProxy.js:config-readed--->', cfgObj);
             let queueName = 'readConfigFileCallbackQueue';
-            while (this[queueName].length) {
-                let callback = this.popCallbackQueue(queueName);
-                callback(errorMessage, cfgObj);
-            }
-        });                
+            this.invokeCallback(queueName, errorMessage, cfgObj);
+        });
     }
     kill() {
         this.ipc.send('kill-render');
     }
     lunch(callback) {
         this.ipc.send('lunch-render');
+    }
+    getTemplates(callback) {
+        this.getTemplatesCallbackQueue.push(callback);
+        this.ipc.send('get-templates');
+    }
+    invokeCallback(queueName, errorMessage, value) {
+        while (this[queueName].length) {
+            let callback = this.popCallbackQueue(queueName);
+            callback(errorMessage, value);
+        }
     }
     popCallbackQueue(queueName) {
         return this[queueName].pop();

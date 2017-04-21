@@ -33,6 +33,17 @@ ipc.on('get-render-state', (event) => {
     });
 });
 
+ipc.on('get-templates', (event) => {
+    let styles = [];
+    let error = ''
+    try {
+        styles = renderSupervisor.collectTemplates();
+    } catch (e) {
+        error = e.toString();
+    }
+    event.sender.send('templates-received', error, styles);
+});
+
 ipc.on('kill-render', (event) => {
     renderSupervisor.kill();
 }); 

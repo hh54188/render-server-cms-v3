@@ -9,6 +9,7 @@ import ConfigView from 'components/ConfigView.js';
 import ConfigStore from 'stores/ConfigStore.js';
 
 import TemplateView from 'components/TemplateView.js';
+import TemplateStore from 'stores/TemplateStore.js';
 
 import TabContainer from 'components/Tab/TabContainer.js';
 import TabHeaderView from 'components/Tab/TabHeader.js';
@@ -17,7 +18,7 @@ import TabContentView from 'components/Tab/TabContent.js';
 import AppStore from 'stores/AppStore.js';
 
 import myEmitter from 'src/myEmitter.js';
-import {Map} from 'immutable';
+import {Map, List} from 'immutable';
 
 // require('semantic-ui-css/semantic.min.css');
 
@@ -25,6 +26,9 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            // App.js
+            appUIModel: ConfigStore.getUIState(),
+            // Config
             configDataModel: Map({
                 lunchState: 'OFFLINE',
                 lunchInfo: '',
@@ -38,10 +42,17 @@ class App extends React.Component {
                 dbPort: 'sample'
             }),
             configUIModel: ConfigStore.getUIState(),
-            appUIModel: ConfigStore.getUIState()
+            // Template
+            templateDataModel: Map({
+                templates: []
+            }),
+            templateUIModel: Map({
+                pagination: {
+                    total: 0,
+                    cur: 0
+                }
+            })
         };
-        this.updateConfigProperty = this.updateConfigProperty.bind(this);
-        this.setConfigViewLoadingState = this.setConfigViewLoadingState.bind(this);
 
         myEmitter.on('CONFIG_STORE_CHANGED', () => {
             this.setState({
@@ -54,17 +65,12 @@ class App extends React.Component {
             this.setState({
                 appUIModel: AppStore.getUIState()
             });
-        })
-    }
-    updateConfigProperty(fieldName, newValue) {
-        this.setState({
-            configDataModel: this.state.configDataModel.set(fieldName, newValue)
         });
-    }
-    setConfigViewLoadingState(loadingState) {
-        this.setState({
-            configUIModel: this.state.configUIModel.set('loading', true)
-        })
+
+        myEmitter.on('TEMPLATE_STORE_CHANGED', () => {
+
+        });
+
     }
     render() {
         let tabHeaderArr = [
@@ -113,7 +119,10 @@ class App extends React.Component {
                                 </TabContentView>
                                 
                                 <TabContentView name={'template'}>
-                                    <TemplateView />
+                                    <TemplateView 
+                                        templates={this.state.templateDataModel}
+                                        UIState={this.state.templateUIModel} 
+                                    />
                                 </TabContentView>
                                 
                                 <TabContentView name={'create-template'}>

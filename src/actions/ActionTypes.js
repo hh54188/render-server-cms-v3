@@ -34,7 +34,11 @@ const ActionTypes = {
     // Render的运行状态发生了变化
     UPDATE_RENDER_STATE: 'UPDATE_RENDER_STATE',
     // 关闭启动错误提示框
-    CLOSE_LUNCH_ERROR_DIALOG: 'CLOSE_LUNCH_ERROR_DIALOG'
+    CLOSE_LUNCH_ERROR_DIALOG: 'CLOSE_LUNCH_ERROR_DIALOG',
+    /*
+        Template
+    */
+    GET_TEMPLATES: 'GET_TEMPLATES'
 };
 
 export default ActionTypes;

@@ -4,10 +4,6 @@ renderSupervisor.getConfig((configObj) => {
     console.log(configObj);
 });
 
-renderSupervisor.lunch();
-
-setInterval(() => {
-    renderSupervisor.isRunning((err, result) => {
-        console.log(result);
-    });
-}, 500)
+// renderSupervisor.lunch();
+var styles = renderSupervisor.collectTemplates();
+console.log(styles);

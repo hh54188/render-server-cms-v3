@@ -14,9 +14,6 @@ export default class ConfigView extends React.Component {
         this.saveButtonClickHandler = this.saveButtonClickHandler.bind(this);
         this.rollbackButtonClickHandler = this.rollbackButtonClickHandler.bind(this);
     }
-    // componentDidUnmount() {
-    //     new Clipboard('.btn');
-    // }
     componentDidMount() {
         new Clipboard('#copy-path');        
     }

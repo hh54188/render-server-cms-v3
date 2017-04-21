@@ -50,8 +50,13 @@ function getTemplateFolderPath(isProduction) {
 }
 
 function getSubTemplateFolderAndFilePath(name, isProduction) {
-    isProduction = isProduction == undefined ? _isProduction : isProduction;    
+    isProduction = isProduction == undefined ? _isProduction : isProduction; 
     return path.resolve(path.join(getTemplateFolderPath(isProduction), name));
+}
+
+function getTemplateJsonFilePath(name, isProduction) {
+    isProduction = isProduction == undefined ? _isProduction : isProduction; 
+    return path.resolve(path.join(getTemplateFolderPath(isProduction), name + '.json'));
 }
 
 function getStyleFolderPath(isProduction) {
@@ -77,6 +82,7 @@ module.exports = {
 
     getTemplateFolderPath: getTemplateFolderPath,
     getSubTemplateFolderAndFilePath: getSubTemplateFolderAndFilePath,
+    getTemplateJsonFilePath: getTemplateJsonFilePath,
     
     getStyleFolderPath: getStyleFolderPath,
     getStyleFile: getStyleFile

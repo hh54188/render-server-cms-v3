@@ -9879,7 +9879,11 @@ var ActionTypes = {
     // Render的运行状态发生了变化
     UPDATE_RENDER_STATE: 'UPDATE_RENDER_STATE',
     // 关闭启动错误提示框
-    CLOSE_LUNCH_ERROR_DIALOG: 'CLOSE_LUNCH_ERROR_DIALOG'
+    CLOSE_LUNCH_ERROR_DIALOG: 'CLOSE_LUNCH_ERROR_DIALOG',
+    /*
+        Template
+    */
+    GET_TEMPLATES: 'GET_TEMPLATES'
 };
 
 exports.default = ActionTypes;
@@ -33659,31 +33663,29 @@ var ElectronProxy = function () {
 
         this.readConfigFileCallbackQueue = [];
         this.openDirectoryDialogCallbackQueue = [];
+        this.getTemplatesCallbackQueue = [];
 
         setInterval(function () {
             _this.ipc.send('get-render-state');
         }, 1000 * 1);
 
         this.ipc.on('render-lunched', function (event, lunchState, info) {
-            // console.log('electronProxy.js: render-lunched', lunchState, info);
             _myEmitter2.default.emit('RENDER_STATE_CHANGED', lunchState, info);
+        });
+
+        this.ipc.on('templates-received', function (event, error, styles) {
+            var queueName = 'getTemplatesCallbackQueue';
+            _this.invokeCallback(queueName, error, styles);
         });
 
         this.ipc.on('directory-selected', function (event, errorMessage, directory) {
             var queueName = 'openDirectoryDialogCallbackQueue';
-            while (_this[queueName].length) {
-                var callback = _this.popCallbackQueue(queueName);
-                callback(errorMessage, directory);
-            }
+            _this.invokeCallback(queueName, errorMessage, directory);
         });
 
         this.ipc.on('config-readed', function (event, errorMessage, cfgObj) {
-            console.log('electronProxy.js:config-readed--->', cfgObj);
             var queueName = 'readConfigFileCallbackQueue';
-            while (_this[queueName].length) {
-                var callback = _this.popCallbackQueue(queueName);
-                callback(errorMessage, cfgObj);
-            }
+            _this.invokeCallback(queueName, errorMessage, cfgObj);
         });
     }
 
@@ -33696,6 +33698,20 @@ var ElectronProxy = function () {
         key: 'lunch',
         value: function lunch(callback) {
             this.ipc.send('lunch-render');
+        }
+    }, {
+        key: 'getTemplates',
+        value: function getTemplates(callback) {
+            this.getTemplatesCallbackQueue.push(callback);
+            this.ipc.send('get-templates');
+        }
+    }, {
+        key: 'invokeCallback',
+        value: function invokeCallback(queueName, errorMessage, value) {
+            while (this[queueName].length) {
+                var callback = this.popCallbackQueue(queueName);
+                callback(errorMessage, value);
+            }
         }
     }, {
         key: 'popCallbackQueue',
@@ -33781,10 +33797,6 @@ var ConfigView = function (_React$Component) {
         _this.rollbackButtonClickHandler = _this.rollbackButtonClickHandler.bind(_this);
         return _this;
     }
-    // componentDidUnmount() {
-    //     new Clipboard('.btn');
-    // }
-
 
     _createClass(ConfigView, [{
         key: 'componentDidMount',
@@ -34379,15 +34391,45 @@ var TemplateView = function (_React$Component) {
         value: function render() {
             var fieldLabelWidth = 5;
             var fieldActionWidth = 11;
-            var styleOptions = [{
-                key: '10001',
-                value: '10001',
-                text: '10001'
-            }, {
-                key: '10002',
-                value: '10002',
-                text: '10002'
-            }];
+            var styleOptions = [];
+
+            var rows = [];
+            this.props.templates.forEach(function (tpl, index) {
+                rows.push(_react2.default.createElement(
+                    _semanticUiReact.Table.Row,
+                    { key: index },
+                    _react2.default.createElement(
+                        _semanticUiReact.Table.Cell,
+                        null,
+                        _react2.default.createElement(_semanticUiReact.Icon, { name: 'folder' }),
+                        ' node_modules'
+                    ),
+                    _react2.default.createElement(
+                        _semanticUiReact.Table.Cell,
+                        { collapsing: true },
+                        _react2.default.createElement(
+                            _semanticUiReact.Popup,
+                            { trigger: _react2.default.createElement(_semanticUiReact.Button, { icon: "content", basic: true, size: 'small', content: '\u6A21\u677F\u63CF\u8FF0' }) },
+                            _react2.default.createElement(
+                                _semanticUiReact.Popup.Content,
+                                null,
+                                _react2.default.createElement('pre', null)
+                            )
+                        ),
+                        _react2.default.createElement(
+                            _semanticUiReact.Popup,
+                            { trigger: _react2.default.createElement(_semanticUiReact.Button, { icon: "content", basic: true, size: 'small', content: '\u6240\u5C5E\u6837\u5F0F\u63CF\u8FF0' }) },
+                            _react2.default.createElement(
+                                _semanticUiReact.Popup.Content,
+                                null,
+                                'Hello World'
+                            )
+                        ),
+                        _react2.default.createElement(_semanticUiReact.Button, { icon: "configure", basic: true, size: 'small', content: '\u6D4B\u8BD5\u6A21\u677F' })
+                    )
+                ));
+            });
+
             return _react2.default.createElement(
                 'div',
                 null,
@@ -34414,6 +34456,15 @@ var TemplateView = function (_React$Component) {
                                 _semanticUiReact.Form,
                                 null,
                                 _react2.default.createElement(
+                                    _semanticUiReact.Divider,
+                                    { horizontal: true },
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        '\u6A21\u677F\u5C5E\u6027\u7B5B\u9009'
+                                    )
+                                ),
+                                _react2.default.createElement(
                                     _semanticUiReact.Form.Group,
                                     { inline: true },
                                     _react2.default.createElement(
@@ -34428,8 +34479,8 @@ var TemplateView = function (_React$Component) {
                                     _react2.default.createElement(
                                         _semanticUiReact.Form.Field,
                                         { width: fieldActionWidth },
-                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u50CF\u7D20' }),
-                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u6BD4\u4F8B' })
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'sizeType', value: '1', label: '\u50CF\u7D20' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'sizeType', value: '2', label: '\u6BD4\u4F8B' })
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34447,8 +34498,8 @@ var TemplateView = function (_React$Component) {
                                     _react2.default.createElement(
                                         _semanticUiReact.Form.Field,
                                         { width: fieldActionWidth },
-                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u56FA\u5B9A' }),
-                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: '\u8303\u56F4' })
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'valueType', value: '1', label: '\u56FA\u5B9A' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'valueType', value: '2', label: '\u8303\u56F4' })
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34466,8 +34517,8 @@ var TemplateView = function (_React$Component) {
                                     _react2.default.createElement(
                                         _semanticUiReact.Form.Field,
                                         { width: fieldActionWidth },
-                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'otpl' }),
-                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'layout' })
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'renderEngine', value: 'otpl', label: 'otpl' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'renderEngine', value: 'layout', label: 'layout' })
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34482,11 +34533,82 @@ var TemplateView = function (_React$Component) {
                                             '\u521B\u610F\u7C7B\u578B\uFF08creative\uFF09'
                                         )
                                     ),
-                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Text' }),
-                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Image' }),
-                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Flash' }),
-                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'TextWidthIcon' }),
-                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, label: 'Video' })
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'creativeType', value: '0', label: 'Text' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'creativeType', value: '1', label: 'Image' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'creativeType', value: '2', label: 'Flash' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'creativeType', value: '4', label: 'TextWidthIcon' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'creativeType', value: '7', label: 'Video' }),
+                                    _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'creativeType', value: '-1', label: '\u5176\u4ED6' })
+                                ),
+                                _react2.default.createElement(
+                                    _semanticUiReact.Divider,
+                                    { horizontal: true },
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        '\u6837\u5F0F\u5C5E\u6027\u7B5B\u9009'
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _semanticUiReact.Form.Group,
+                                    { inline: true },
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Form.Field,
+                                        { width: fieldLabelWidth },
+                                        _react2.default.createElement(
+                                            'label',
+                                            null,
+                                            '\u6D41\u91CF\u7C7B\u578B (flowType)'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Form.Field,
+                                        { width: fieldActionWidth },
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'flowType', value: '1', label: 'PC' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'flowType', value: '2', label: 'MBL' })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _semanticUiReact.Form.Group,
+                                    { inline: true },
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Form.Field,
+                                        { width: fieldLabelWidth },
+                                        _react2.default.createElement(
+                                            'label',
+                                            null,
+                                            '\u5E03\u5C40 (layout)'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Form.Field,
+                                        { width: fieldActionWidth },
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'layout', value: '1', label: '\u72EC\u5360' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'layout', value: '2', label: '\u7F51\u683C' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'layout', value: '4', label: '\u5BFC\u822A' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'layout', value: '-1', label: '\u5176\u4ED6' })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _semanticUiReact.Form.Group,
+                                    { inline: true },
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Form.Field,
+                                        { width: fieldLabelWidth },
+                                        _react2.default.createElement(
+                                            'label',
+                                            null,
+                                            '\u52A8\u4F5C\u7C7B\u578B (AttachType)'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        _semanticUiReact.Form.Field,
+                                        { width: fieldActionWidth },
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'attachType', value: '0', label: '\u8DF3\u8F6C' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'attachType', value: '16', label: 'app\u4E0B\u8F7D' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'attachType', value: '1024', label: 'app\u5524\u9192' }),
+                                        _react2.default.createElement(_semanticUiReact.Form.Checkbox, { checked: true, name: 'attachType', value: '-1', label: '\u5176\u4ED6' })
+                                    )
                                 ),
                                 _react2.default.createElement(
                                     _semanticUiReact.Form.Group,
@@ -34529,40 +34651,7 @@ var TemplateView = function (_React$Component) {
                     _react2.default.createElement(
                         _semanticUiReact.Table.Body,
                         null,
-                        _react2.default.createElement(
-                            _semanticUiReact.Table.Row,
-                            null,
-                            _react2.default.createElement(
-                                _semanticUiReact.Table.Cell,
-                                null,
-                                _react2.default.createElement(_semanticUiReact.Icon, { name: 'folder' }),
-                                ' node_modules'
-                            ),
-                            _react2.default.createElement(
-                                _semanticUiReact.Table.Cell,
-                                { collapsing: true },
-                                _react2.default.createElement(_semanticUiReact.Button, { icon: "configure", basic: true, size: 'small', content: '\u6D4B\u8BD5\u6A21\u677F' }),
-                                _react2.default.createElement(
-                                    _semanticUiReact.Popup,
-                                    { trigger: _react2.default.createElement(_semanticUiReact.Button, { icon: "content", basic: true, size: 'small', content: '\u6A21\u677F\u63CF\u8FF0' }) },
-                                    _react2.default.createElement(
-                                        _semanticUiReact.Popup.Content,
-                                        null,
-                                        'Hello World'
-                                    )
-                                ),
-                                _react2.default.createElement(_semanticUiReact.Button, { icon: "copy", basic: true, size: 'small', content: '\u590D\u5236\u540D\u79F0' }),
-                                _react2.default.createElement(
-                                    _semanticUiReact.Popup,
-                                    { trigger: _react2.default.createElement(_semanticUiReact.Button, { icon: "warning sign", color: 'red', size: 'small', content: '\u5B58\u5728\u9519\u8BEF' }) },
-                                    _react2.default.createElement(
-                                        _semanticUiReact.Popup.Content,
-                                        null,
-                                        'Hello World'
-                                    )
-                                )
-                            )
-                        )
+                        rows
                     ),
                     _react2.default.createElement(
                         _semanticUiReact.Table.Footer,
@@ -66788,6 +66877,10 @@ var _TemplateView = __webpack_require__(438);
 
 var _TemplateView2 = _interopRequireDefault(_TemplateView);
 
+var _TemplateStore = __webpack_require__(854);
+
+var _TemplateStore2 = _interopRequireDefault(_TemplateStore);
+
 var _TabContainer = __webpack_require__(238);
 
 var _TabContainer2 = _interopRequireDefault(_TabContainer);
@@ -66829,6 +66922,9 @@ var App = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
         _this.state = {
+            // App.js
+            appUIModel: _ConfigStore2.default.getUIState(),
+            // Config
             configDataModel: (0, _immutable.Map)({
                 lunchState: 'OFFLINE',
                 lunchInfo: '',
@@ -66842,10 +66938,17 @@ var App = function (_React$Component) {
                 dbPort: 'sample'
             }),
             configUIModel: _ConfigStore2.default.getUIState(),
-            appUIModel: _ConfigStore2.default.getUIState()
+            // Template
+            templateDataModel: (0, _immutable.Map)({
+                templates: []
+            }),
+            templateUIModel: (0, _immutable.Map)({
+                pagination: {
+                    total: 0,
+                    cur: 0
+                }
+            })
         };
-        _this.updateConfigProperty = _this.updateConfigProperty.bind(_this);
-        _this.setConfigViewLoadingState = _this.setConfigViewLoadingState.bind(_this);
 
         _myEmitter2.default.on('CONFIG_STORE_CHANGED', function () {
             _this.setState({
@@ -66859,24 +66962,13 @@ var App = function (_React$Component) {
                 appUIModel: _AppStore2.default.getUIState()
             });
         });
+
+        _myEmitter2.default.on('TEMPLATE_STORE_CHANGED', function () {});
+
         return _this;
     }
 
     _createClass(App, [{
-        key: 'updateConfigProperty',
-        value: function updateConfigProperty(fieldName, newValue) {
-            this.setState({
-                configDataModel: this.state.configDataModel.set(fieldName, newValue)
-            });
-        }
-    }, {
-        key: 'setConfigViewLoadingState',
-        value: function setConfigViewLoadingState(loadingState) {
-            this.setState({
-                configUIModel: this.state.configUIModel.set('loading', true)
-            });
-        }
-    }, {
         key: 'render',
         value: function render() {
             var tabHeaderArr = [{
@@ -66930,7 +67022,10 @@ var App = function (_React$Component) {
                                 _react2.default.createElement(
                                     _TabContent2.default,
                                     { name: 'template' },
-                                    _react2.default.createElement(_TemplateView2.default, null)
+                                    _react2.default.createElement(_TemplateView2.default, {
+                                        templates: this.state.templateDataModel,
+                                        UIState: this.state.templateUIModel
+                                    })
                                 ),
                                 _react2.default.createElement(_TabContent2.default, { name: 'create-template' })
                             )
@@ -66945,6 +67040,165 @@ var App = function (_React$Component) {
 }(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.querySelector('#container'));
+
+/***/ }),
+/* 854 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _dispatcher = __webpack_require__(141);
+
+var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+var _ActionTypes = __webpack_require__(139);
+
+var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+var _immutable = __webpack_require__(142);
+
+var _myEmitter = __webpack_require__(75);
+
+var _myEmitter2 = _interopRequireDefault(_myEmitter);
+
+var _TemplateActions = __webpack_require__(855);
+
+var _TemplateActions2 = _interopRequireDefault(_TemplateActions);
+
+var _TemplateRemote = __webpack_require__(856);
+
+var _TemplateRemote2 = _interopRequireDefault(_TemplateRemote);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TemplateStore = function () {
+    function TemplateStore() {
+        _classCallCheck(this, TemplateStore);
+
+        var _modal = (0, _immutable.Map)({
+            styles: [],
+            templates: [],
+            styleIds: [],
+            filters: {}
+        });
+
+        var _ui = (0, _immutable.Map)({
+            pagination: {
+                total: 0,
+                cur: 0
+            }
+        });
+
+        _dispatcher2.default.register(function (payload) {
+            switch (payload.type) {
+                case _ActionTypes2.default.GET_TEMPLATES:
+                    _TemplateRemote2.default.getTemplates().then(function (styles) {
+                        debugger;
+                    }, function (error) {
+                        debugger;
+                    });
+                    break;
+            }
+        });
+
+        _TemplateActions2.default.getTemplates();
+    }
+
+    _createClass(TemplateStore, [{
+        key: 'getTemplates',
+        value: function getTemplates() {}
+    }]);
+
+    return TemplateStore;
+}();
+
+exports.default = new TemplateStore();
+
+/***/ }),
+/* 855 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _dispatcher = __webpack_require__(141);
+
+var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+var _ActionTypes = __webpack_require__(139);
+
+var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Actions = {
+    getTemplates: function getTemplates() {
+        _dispatcher2.default.dispatch({
+            type: _ActionTypes2.default.GET_TEMPLATES
+        });
+    }
+};
+
+exports.default = Actions;
+
+/***/ }),
+/* 856 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _electronProxy = __webpack_require__(433);
+
+var _electronProxy2 = _interopRequireDefault(_electronProxy);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TemplateRemote = function () {
+    function TemplateRemote() {
+        _classCallCheck(this, TemplateRemote);
+    }
+
+    _createClass(TemplateRemote, [{
+        key: 'getTemplates',
+        value: function getTemplates() {
+            return new Promise(function (resolve, reject) {
+                _electronProxy2.default.getTemplates(function (err, styles) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(styles);
+                });
+            });
+        }
+    }]);
+
+    return TemplateRemote;
+}();
+
+exports.default = new TemplateRemote();
 
 /***/ })
 /******/ ]);
