@@ -48,6 +48,7 @@ class App extends React.Component {
                 templates: [],
                 styleIds: [],
                 filters: {
+                    searchKeyword: '',
                     template: {
                         sizeType: [1, 2],
                         valueType: [1, 2],
@@ -58,12 +59,13 @@ class App extends React.Component {
                         flowType: [1, 2],
                         layout: [1, 2, 4, -1],
                         attachType: [0, 16, 1024, -1],
-                        specifiedStyleIds: []
+                        unselectedStyleIds: [],
+                        selectedStyleIds: []
                     },
                     pagination: {
                         countPerPage: 10,
                         total: 0,
-                        cur: 0
+                        cur: 1
                     }
                 }
             }),
@@ -86,7 +88,9 @@ class App extends React.Component {
         });
 
         myEmitter.on('TEMPLATE_STORE_CHANGED', () => {
-
+            this.setState({
+                templateDataModel: TemplateStore.getTemplatesModel()
+            });
         });
 
     }
